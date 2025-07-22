@@ -155,7 +155,7 @@ class TarefaCAV:
 # ==============================================================================
 class ProcessoComPrioridade:
     """Wrapper para tarefa com prioridade dinâmica para uso com heapq"""
-    
+
     def __init__(self, tarefa: TarefaCAV, prioridade_dinamica: float):
         self.tarefa = tarefa
         self.prioridade_dinamica = prioridade_dinamica
@@ -250,7 +250,7 @@ class EscalonadorHAPS(EscalonadorCAV):
         super().__init__()
         self.contexto = contexto
         self. arquivo_historico = arquivo_historico
-        self.historico_desemprenho: Dict[ str, Dict[ str, Any ] ] = {}
+        self.historico_desempenho: Dict[ str, Dict[ str, Any ] ] = {}
 
         #Parâmetros para o modelo preditivo
         self.alpha = 0.1 #fator de aprendizado
@@ -320,7 +320,127 @@ class EscalonadorHAPS(EscalonadorCAV):
             print("[IA] Iniciando com histórico vazio por segurança")
             time.sleep(1) #!VER DEPOIS
             self.modelo_pred = {}
+
+    def _salvar_historico_ia(self):
+        try:
+            contexto_dict ={
+                'clima': self.contexto.clima.value,
+                'tipo_via': self.contexto.tipo.via.value,
+                'trafego': self.contexto.trafego.value,
+                'velocidade_atual': self.contexto.velocidade_atual,
+                'modo_autonomo': self.contexto.modo_autonomo
+            }
             
+            dados_persistencia = {
+                'versao_esquema': '1.0',
+                'timestamp_salvamento': datetime.now().isonformat(),
+                'contexto_ultimo_uso': contexto_dict,
+                'historico_aprendizado': self.historico_desempenho,
+                'estatisticas_sessao': {
+                    'tarefas_processadas': len(self.tarefas),
+                    'sobrecarga_total': self.sobrecarga_total,
+                    'trocas_contexto': self.trocas_contexto
+                },
+                'modelo_pred': self.modelo_pred
+            }
+
+            with open(self.arquivo_historico, 'w', encoding='utf-8') as f:
+                json.dump(dados_persistencia, f, indent=2, ensure_ascii=False)
+            
+            print(f"[IA] Histórico persistido: {len(self.historico_desempenho)} tarefas aprendidas")
+            print(f"[IA] Modelo preditivo persistido: {len(self.modelo_pred)} entradas")
+
+        except IOError as e:
+            print(f"[ERRO] Falha ao salvar histórico IA: {e}")
+            time.sleep(1) #! VER LINHA
+    
+    def _exibir_estatisticas_ia(self):
+        if not self.historico_desempenho:
+            return
+        
+        print(f"[IA] === ESTATÍSTICAS DE APRENDIZADO ===")
+
+        tarefas_criticas = sum(1 for dados in self.historico_desempenho.values()
+                               if dados.get('fator_aprendizado', 1.0) > 1.1)
+        tarefas_problematicas = sum(1 for dados in self.historico_desempenho.values()
+                               if dados.get('fator_aprendizado', 1.0) < 0.9)
+        
+        print(f"[IA] Tarefas com desempenho superior: {tarefas_criticas}")
+        print(f"[IA] Tarefas que precisam de atenção: {tarefas_problematicas}")
+
+    def _gerar_hash_tarefa(self, tarefa: TarefaCAV) -> str:
+        """
+        Gera o hash de tarefas para otimização de localização incluindo o contexto
+
+        inclui nome, tipo e contexto básico para rastreamento
+        """
+        contexto_hash = f"{self.contexto.clima.value}_{self.contexto.trafego.value}_{self.contexto.modo_autonomo}"
+        return f"{tarefa.nome}_{tarefa.tipo_processo.nome}_{contexto_hash}"
+    
+    def _atualizar_aprendizado_ia(self, tarefa: TarefaCAV, sucesso: bool, tempo_execucao: float):
+        """
+        Atualiza aprendizado com base na execução
+
+        Argumentos:
+            Tarefa: Tarefa executada
+            Sucesso: se a tarefa foi completada dentro do deadline
+            tempo_execucao: Tempo de execução da tarefa
+        """
+        hash_tarefa = self._gerar_hash_tarefa(tarefa)
+        timestamp_atual = datetima.now().isonformat()
+
+        if hash_tarefa not in self.historico_desempenho:
+            self.historico_desempenho[hash_tarefa] = {
+                'fator_aprendizado': 1.0,
+                'execucoes_totais': 0,
+                'execucoes_sucesso': 0,
+                'tempo_medio_execucao': 0.0,
+                'contextos_execucao': [],
+                'primeira_execucao': timestamp_atual
+            }
+        
+        dados_tarefa = self.historico_desempenho[hash_tarefa]
+        dados_tarefa['execucoes_totais'] += 1
+        dados_tarefa['ultimas_atualizacao'] = timestamp_atual
+
+        if sucesso:
+            dados_tarefa['execucoes_sucesso'] += 1
+        
+        alpha = 0.3
+        if dados_tarefa['tempo_medio_execucao'] == 0:
+            dados_tarefa['tempo_medio_execucao'] = tempo_execucao
+        else:
+            dados_tarefa['tempo_medio_execucao'] = (
+                alpha * tempo_execucao +
+                ( 1 - alpha ) * dados_tarefa['tempo_medio_execucao']
+            )
+
+        contexto_execucao = {
+            'clima': self.contexto.clima.value,
+            'trafego': self.contexto.trafego.value,
+            'velocidade': self.contexto.velocidade_atual,
+            'sucesso': sucesso,
+            'tempo_execucao': tempo_execucao,
+            'timestamp': timestamp_atual
+        }
+
+        #atualiza os contextos de execução sempre para no máximo 10 runs
+
+        dados_tarefa['contextos_execucao'].append(contexto_execucao)
+        
+        if len(dados_tarefa['contextos_execucao'] > 10):
+            dados_tarefa['contextos_execucao'].pop(0)
+
+        #calcula novo fator de aprendizado baseado na taxa sucesso
+        taxa_sucesso = dados_tarefa['execucoes_sucesso'] / dados_tarefa['execucoes_totais']
+
+        if taxa_sucesso >= 0.9:
+            #excelente desempenho
+            dados_tarefa['fator_aprendizado'] = 1.5, 1.0 + (taxa_sucesso - 0.9) * 2
+        elif taxa_sucesso >= 0.7:
+            dados_tarefa['fator_aprendizado'] = 1.0 + (taxa_sucesso - 0.7)
+    
+
 class EscalonadorFIFO(EscalonadorCAV):
     def escalonar(self):
         """Escalonamento FIFO para veículos autônomos"""
@@ -583,6 +703,7 @@ def analisar_desempenho(escalonadores_com_tempos: List[Tuple[str, EscalonadorCAV
 # ==============================================================================
 # FUNÇÃO PRINCIPAL DE COMPARAÇÃO
 # ==============================================================================
+
 def executar_comparacao_algoritmos():
     """
     Executa comparação entre diferentes algoritmos de escalonamento.
