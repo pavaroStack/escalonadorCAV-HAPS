@@ -431,15 +431,52 @@ class EscalonadorHAPS(EscalonadorCAV):
         if len(dados_tarefa['contextos_execucao'] > 10):
             dados_tarefa['contextos_execucao'].pop(0)
 
-        #calcula novo fator de aprendizado baseado na taxa sucesso
+        #calcula novo fator de aprendizado baseado na taxa sucesso, quanto melhor a taxa de sucesso, menos ela precisa aprender
         taxa_sucesso = dados_tarefa['execucoes_sucesso'] / dados_tarefa['execucoes_totais']
 
         if taxa_sucesso >= 0.9:
             #excelente desempenho
-            dados_tarefa['fator_aprendizado'] = 1.5, 1.0 + (taxa_sucesso - 0.9) * 2
+            dados_tarefa['fator_aprendizado'] = min(1.5, 1.0 + (taxa_sucesso - 0.9) * 2)
         elif taxa_sucesso >= 0.7:
             dados_tarefa['fator_aprendizado'] = 1.0 + (taxa_sucesso - 0.7)
+        elif taxa_sucesso >= 0.5:
+            dados_tarefa['fator_aprendizado'] = 1.0
+        else:
+            dados_tarefa['fator_aprendizado'] = max(0.7, 0.5 + taxa_sucesso)
+        
+        print(f"[IA-LEARN] {hash_tarefa}: Taxa sucesso {taxa_sucesso:.2f} -> Fator {dados_tarefa['fator_aprendizado']:.3f}")
+
+    def prever_tempo_exec(self, tarefa: TarefaCAV) -> float:
+
+        hash_tarefa = self._gerar_hash_tarefa(tarefa)
+        #? se a tarefa não estiver no histórico de execucção e nem no modelo preditivo então salva o peso dela como 0.0
+        #! se a tarefa não estiver no historico mas estiver no modelo retorna o peso dela, caso seja maior que 0.1
+        if not tarefa.historico_exec:
+            if hash_tarefa not in self.modelo_pred:
+                self.modelo_pred[hash_tarefa] = (tarefa.duracao, 0.0)
+            return max(0.1, tarefa.duracao)
+        
+        #? se o modelo de tarefa existe no historico mas não existe no modelo preditivo, inicializa ela
+        if hash_tarefa not in self.modelo_pred:
+            self.modelo_pred[hash_tarefa] = (tarefa.duracao, 0.0)
+        
+        intercept, slope = self.modelo_pred[hash_tarefa]
+
+        x = len(tarefa.historico_exec)
+
+        tempo_restante_previsto = intercept + slope * x
+        return max(0.1, tempo_restante_previsto)
     
+    def atualizar_modelo(self, tarefa: TarefaCAV, tempo_real_executado: float):
+
+        hash_tarefa = self._gerar_hash_tarefa(tarefa)
+
+        if not tarefa.historico_exec:
+            return
+        
+        x_antigo = len(tarefa.historico_exec) - 1
+
+
 
 class EscalonadorFIFO(EscalonadorCAV):
     def escalonar(self):
@@ -472,6 +509,40 @@ class EscalonadorFIFO(EscalonadorCAV):
         self.tempo_simulacao_final = tempo_atual_simulado # Registra o tempo total simulado
         self.calcular_metricas()
         self.exibir_sobrecarga()
+
+class EscalonadorSJF(EscalonadorCAV):
+    def escalonar(self):
+        """Escalonamento SJF para veículos autônomos."""
+        print("\n=== ESCALONAMENTO SJF ===")
+        tempo_atual_simulado = 0.0  # Inicia o tempo simulado
+        #Ordena a lista de tarefas com base na sua duração.
+        tarefas_ordenadas = sorted(self.tarefas, key=lambda tarefa: tarefa.duracao)
+        for tarefa in tarefas_ordenadas:
+            # Reseta o estado da tarefa para esta simulação
+            tarefa.tempo_restante = tarefa.duracao
+            tarefa.iniciado = False
+            tarefa.tempo_inicio = None
+            tarefa.tempo_final = None
+            tarefa.tempo_espera = 0.0
+            tarefa.tempo_resposta = None
+            tarefa.timestamp_chegada = 0.0
+
+            print(f"[SJF] Iniciando '{tarefa.nome}' no tempo simulado {tempo_atual_simulado:.2f}s")
+
+            #Executa a tarefa completamente
+            tempo_executado = tarefa.executar(tarefa.duracao, tempo_atual_simulado)
+            time.sleep(0.01)  # Simulação acelerada
+
+            tempo_atual_simulado += tempo_executado  # Avança o tempo simulado
+            tarefa.tempo_final = tempo_atual_simulado  # Define o tempo final
+            tarefa.tempo_espera = tarefa.tempo_final - tarefa.timestamp_chegada - tarefa.duracao
+
+            print(f"[SJF] Tarefa {tarefa.nome} finalizada no tempo simulado {tarefa.tempo_final:.2f}s.")
+            self.registrar_sobrecarga(0.05)  # Sobrecarga simulada
+
+        self.tempo_simulacao_final = tempo_atual_simulado  # Registra o tempo total simulado
+        self.calcular_metricas()
+        self.exibir_sobrecarga() 
 
 class EscalonadorRoundRobin(EscalonadorCAV):
     def __init__(self):
@@ -721,9 +792,11 @@ def executar_comparacao_algoritmos():
     # Lista de escalonadores para comparar
     # Adicione seus novos algoritmos aqui, instanciando-os.
     escalonadores = [
-        ("FIFO", EscalonadorFIFO()),
         ("Round Robin", EscalonadorRoundRobin()), 
-        ("Prioridade Estática", EscalonadorPrioridade())
+        ("SJF", EscalonadorSJF()),
+        ("FIFO", EscalonadorFIFO()),       
+        ("Prioridade Estática", EscalonadorPrioridade()),
+        
         # Adicione seu novo algoritmo aqui:
         # ("Meu Novo Algoritmo", MeuNovoAlgoritmo(parametros_se_tiver))
     ]
