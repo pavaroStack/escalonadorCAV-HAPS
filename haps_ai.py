@@ -387,7 +387,7 @@ class EscalonadorHAPS(EscalonadorCAV):
             tempo_execucao: Tempo de execução da tarefa
         """
         hash_tarefa = self._gerar_hash_tarefa(tarefa)
-        timestamp_atual = datetima.now().isonformat()
+        timestamp_atual = datetime.now().isonformat()
 
         if hash_tarefa not in self.historico_desempenho:
             self.historico_desempenho[hash_tarefa] = {
