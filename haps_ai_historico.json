@@ -1,6 +1,6 @@
 {
   "versao_esquema": "1.0",
-  "timestamp_salvamento": "2025-07-23T01:35:18.495216",
+  "timestamp_salvamento": "2025-07-23T10:30:01.784946",
   "contexto_ultimo_uso": {
     "clima": "chuva",
     "tipo_via": "rodovia",
@@ -10,42 +10,26 @@
   },
   "historico_aprendizado": {
     "Sistema_Frenagem_SEGURANCA_CRITICA_chuva_alta_True": {
-      "fator_aprendizado": 1.2,
-      "execucoes_totais": 12,
-      "execucoes_sucesso": 12,
-      "tempo_medio_execucao": 5.726098478977999,
+      "fator_aprendizado": 1.0461538461538462,
+      "execucoes_totais": 26,
+      "execucoes_sucesso": 24,
+      "tempo_medio_execucao": 4.968777027845846,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": true,
-          "tempo_execucao": 4.0,
-          "timestamp": "2025-07-23T01:08:06.354792"
+          "tempo_execucao": 5.01,
+          "timestamp": "2025-07-23T01:45:27.407678"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 6.05,
-          "timestamp": "2025-07-23T01:08:08.515124"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 4.0,
-          "timestamp": "2025-07-23T01:08:41.375509"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 5.0,
-          "timestamp": "2025-07-23T01:08:43.584056"
+          "sucesso": false,
+          "tempo_execucao": 13.03,
+          "timestamp": "2025-07-23T01:45:29.580210"
         },
         {
           "clima": "chuva",
@@ -53,23 +37,7 @@
           "velocidade": 95.0,
           "sucesso": true,
           "tempo_execucao": 5.01,
-          "timestamp": "2025-07-23T01:33:09.863914"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 7.01,
-          "timestamp": "2025-07-23T01:33:12.025581"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 5.01,
-          "timestamp": "2025-07-23T01:34:09.243145"
+          "timestamp": "2025-07-23T01:45:49.086541"
         },
         {
           "clima": "chuva",
@@ -77,7 +45,23 @@
           "velocidade": 95.0,
           "sucesso": true,
           "tempo_execucao": 4.0,
-          "timestamp": "2025-07-23T01:34:11.386784"
+          "timestamp": "2025-07-23T01:45:51.359829"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": true,
+          "tempo_execucao": 4.0,
+          "timestamp": "2025-07-23T01:46:17.844741"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": true,
+          "tempo_execucao": 4.0,
+          "timestamp": "2025-07-23T01:46:20.033146"
         },
         {
           "clima": "chuva",
@@ -85,7 +69,15 @@
           "velocidade": 95.0,
           "sucesso": true,
           "tempo_execucao": 7.01,
-          "timestamp": "2025-07-23T01:35:16.187572"
+          "timestamp": "2025-07-23T01:53:56.931341"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": true,
+          "tempo_execucao": 4.0,
+          "timestamp": "2025-07-23T01:53:59.277613"
         },
         {
           "clima": "chuva",
@@ -93,1338 +85,1346 @@
           "velocidade": 95.0,
           "sucesso": true,
           "tempo_execucao": 6.01,
-          "timestamp": "2025-07-23T01:35:18.481608"
+          "timestamp": "2025-07-23T10:29:59.513090"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": true,
+          "tempo_execucao": 4.0,
+          "timestamp": "2025-07-23T10:30:01.763744"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.220931",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.481608"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.763744"
     },
     "Detecção_Obstáculo_SEGURANCA_CRITICA_chuva_alta_True": {
-      "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
-      "execucoes_sucesso": 1,
-      "tempo_medio_execucao": 16.853069366847,
+      "fator_aprendizado": 0.7307692307692308,
+      "execucoes_totais": 26,
+      "execucoes_sucesso": 6,
+      "tempo_medio_execucao": 14.543822048472052,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 9.05,
-          "timestamp": "2025-07-23T01:08:06.355792"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": false,
-          "tempo_execucao": 16.2,
-          "timestamp": "2025-07-23T01:08:08.516036"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": false,
-          "tempo_execucao": 22.250000000000004,
-          "timestamp": "2025-07-23T01:08:41.378512"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": false,
-          "tempo_execucao": 21.250000000000004,
-          "timestamp": "2025-07-23T01:08:43.585389"
+          "tempo_execucao": 22.060000000000002,
+          "timestamp": "2025-07-23T01:45:27.408677"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": true,
-          "tempo_execucao": 11.08,
-          "timestamp": "2025-07-23T01:33:09.864915"
+          "tempo_execucao": 7.01,
+          "timestamp": "2025-07-23T01:45:29.580210"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 19.150000000000002,
-          "timestamp": "2025-07-23T01:33:12.026581"
+          "tempo_execucao": 15.04,
+          "timestamp": "2025-07-23T01:45:49.087541"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 12.08,
-          "timestamp": "2025-07-23T01:34:09.244145"
+          "tempo_execucao": 19.04,
+          "timestamp": "2025-07-23T01:45:51.361830"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": true,
+          "tempo_execucao": 10.02,
+          "timestamp": "2025-07-23T01:46:17.845740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 20.150000000000002,
-          "timestamp": "2025-07-23T01:34:11.389783"
+          "tempo_execucao": 12.02,
+          "timestamp": "2025-07-23T01:46:20.035138"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 16.09,
-          "timestamp": "2025-07-23T01:35:16.188572"
+          "tempo_execucao": 15.03,
+          "timestamp": "2025-07-23T01:53:56.932340"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 17.150000000000002,
-          "timestamp": "2025-07-23T01:35:18.483606"
+          "tempo_execucao": 10.02,
+          "timestamp": "2025-07-23T01:53:59.279616"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": true,
+          "tempo_execucao": 11.03,
+          "timestamp": "2025-07-23T10:29:59.513090"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": false,
+          "tempo_execucao": 20.05,
+          "timestamp": "2025-07-23T10:30:01.765752"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.225939",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.483606"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.765752"
     },
     "Controle_Estabilidade_SEGURANCA_CRITICA_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
-      "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 17.044561296323998,
+      "execucoes_totais": 26,
+      "execucoes_sucesso": 1,
+      "tempo_medio_execucao": 16.88264490878071,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 17.200000000000003,
-          "timestamp": "2025-07-23T01:08:06.356790"
+          "tempo_execucao": 12.03,
+          "timestamp": "2025-07-23T01:45:27.408677"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 22.25,
-          "timestamp": "2025-07-23T01:08:08.516036"
+          "tempo_execucao": 22.060000000000002,
+          "timestamp": "2025-07-23T01:45:29.581209"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 19.200000000000003,
-          "timestamp": "2025-07-23T01:08:41.377513"
+          "tempo_execucao": 24.07,
+          "timestamp": "2025-07-23T01:45:49.088542"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 18.200000000000003,
-          "timestamp": "2025-07-23T01:08:43.585389"
+          "tempo_execucao": 11.02,
+          "timestamp": "2025-07-23T01:45:51.360919"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 17.15,
-          "timestamp": "2025-07-23T01:33:09.865914"
+          "tempo_execucao": 16.04,
+          "timestamp": "2025-07-23T01:46:17.845740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 13.08,
-          "timestamp": "2025-07-23T01:33:12.026581"
+          "tempo_execucao": 21.050000000000004,
+          "timestamp": "2025-07-23T01:46:20.036137"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 19.150000000000002,
-          "timestamp": "2025-07-23T01:34:09.244145"
+          "tempo_execucao": 24.060000000000002,
+          "timestamp": "2025-07-23T01:53:56.933338"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 14.08,
-          "timestamp": "2025-07-23T01:34:11.388784"
+          "tempo_execucao": 19.05,
+          "timestamp": "2025-07-23T01:53:59.282614"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 25.170000000000005,
-          "timestamp": "2025-07-23T01:35:16.189571"
+          "tempo_execucao": 20.06,
+          "timestamp": "2025-07-23T10:29:59.514095"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
-          "sucesso": false,
-          "tempo_execucao": 12.08,
-          "timestamp": "2025-07-23T01:35:18.482615"
+          "sucesso": true,
+          "tempo_execucao": 10.02,
+          "timestamp": "2025-07-23T10:30:01.763744"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.225939",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.482615"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.763744"
     },
     "Sensor_LiDAR_TEMPO_REAL_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 44.713478022478,
+      "tempo_medio_execucao": 31.955010237583405,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 24.250000000000004,
-          "timestamp": "2025-07-23T01:08:06.356790"
+          "tempo_execucao": 31.080000000000005,
+          "timestamp": "2025-07-23T01:45:27.409678"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 41.45,
-          "timestamp": "2025-07-23T01:08:08.517036"
+          "tempo_execucao": 45.11,
+          "timestamp": "2025-07-23T01:45:29.582208"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 41.45,
-          "timestamp": "2025-07-23T01:08:41.379511"
+          "tempo_execucao": 45.11,
+          "timestamp": "2025-07-23T01:45:49.089542"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 58.64999999999999,
-          "timestamp": "2025-07-23T01:08:43.587393"
+          "tempo_execucao": 38.080000000000005,
+          "timestamp": "2025-07-23T01:45:51.362830"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 28.17,
-          "timestamp": "2025-07-23T01:33:09.865914"
+          "tempo_execucao": 23.060000000000002,
+          "timestamp": "2025-07-23T01:46:17.847740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 46.25,
-          "timestamp": "2025-07-23T01:33:12.027581"
+          "tempo_execucao": 40.09,
+          "timestamp": "2025-07-23T01:46:20.037180"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 30.170000000000005,
-          "timestamp": "2025-07-23T01:34:09.245292"
+          "tempo_execucao": 32.080000000000005,
+          "timestamp": "2025-07-23T01:53:56.933338"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 48.24999999999999,
-          "timestamp": "2025-07-23T01:34:11.390783"
+          "tempo_execucao": 29.070000000000004,
+          "timestamp": "2025-07-23T01:53:59.283614"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 59.33,
-          "timestamp": "2025-07-23T01:35:16.191572"
+          "tempo_execucao": 30.080000000000002,
+          "timestamp": "2025-07-23T10:29:59.514095"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 39.25000000000001,
-          "timestamp": "2025-07-23T01:35:18.487609"
+          "tempo_execucao": 31.070000000000004,
+          "timestamp": "2025-07-23T10:30:01.767751"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.228944",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.487609"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.767751"
     },
     "Controle_Motor_TEMPO_REAL_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 41.143082455232,
+      "tempo_medio_execucao": 40.31118024665123,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 37.400000000000006,
-          "timestamp": "2025-07-23T01:08:06.357790"
+          "tempo_execucao": 39.1,
+          "timestamp": "2025-07-23T01:45:27.409678"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 35.400000000000006,
-          "timestamp": "2025-07-23T01:08:08.517036"
+          "tempo_execucao": 36.09,
+          "timestamp": "2025-07-23T01:45:29.582208"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 35.400000000000006,
-          "timestamp": "2025-07-23T01:08:41.379511"
+          "tempo_execucao": 39.1,
+          "timestamp": "2025-07-23T01:45:49.089542"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 34.400000000000006,
-          "timestamp": "2025-07-23T01:08:43.586393"
+          "tempo_execucao": 31.060000000000002,
+          "timestamp": "2025-07-23T01:45:51.362830"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 46.25,
-          "timestamp": "2025-07-23T01:33:09.867917"
+          "tempo_execucao": 32.080000000000005,
+          "timestamp": "2025-07-23T01:46:17.847740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 31.170000000000005,
-          "timestamp": "2025-07-23T01:33:12.027581"
+          "tempo_execucao": 32.07000000000001,
+          "timestamp": "2025-07-23T01:46:20.036137"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 53.31999999999999,
-          "timestamp": "2025-07-23T01:34:09.246296"
+          "tempo_execucao": 46.11,
+          "timestamp": "2025-07-23T01:53:56.934338"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 42.239999999999995,
-          "timestamp": "2025-07-23T01:34:11.390783"
+          "tempo_execucao": 40.09,
+          "timestamp": "2025-07-23T01:53:59.284613"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 61.38999999999999,
-          "timestamp": "2025-07-23T01:35:16.192569"
+          "tempo_execucao": 41.1,
+          "timestamp": "2025-07-23T10:29:59.515095"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 25.170000000000005,
-          "timestamp": "2025-07-23T01:35:18.484607"
+          "tempo_execucao": 43.09,
+          "timestamp": "2025-07-23T10:30:01.769749"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.229936",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.484607"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.769749"
     },
     "Processamento_Camera_TEMPO_REAL_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 52.33591246575898,
+      "tempo_medio_execucao": 54.81010060397638,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 50.55,
-          "timestamp": "2025-07-23T01:08:06.358790"
+          "tempo_execucao": 51.12,
+          "timestamp": "2025-07-23T01:45:27.410677"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 52.599999999999994,
-          "timestamp": "2025-07-23T01:08:08.518034"
+          "tempo_execucao": 62.13999999999999,
+          "timestamp": "2025-07-23T01:45:29.583208"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 58.599999999999994,
-          "timestamp": "2025-07-23T01:08:41.380510"
+          "tempo_execucao": 62.13999999999999,
+          "timestamp": "2025-07-23T01:45:49.090542"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 55.599999999999994,
-          "timestamp": "2025-07-23T01:08:43.586393"
+          "tempo_execucao": 49.1,
+          "timestamp": "2025-07-23T01:45:51.362830"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 50.309999999999995,
-          "timestamp": "2025-07-23T01:33:09.867917"
+          "tempo_execucao": 46.11,
+          "timestamp": "2025-07-23T01:46:17.848741"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 56.31999999999999,
-          "timestamp": "2025-07-23T01:33:12.028581"
+          "tempo_execucao": 51.11,
+          "timestamp": "2025-07-23T01:46:20.037180"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 52.309999999999995,
-          "timestamp": "2025-07-23T01:34:09.246296"
+          "tempo_execucao": 57.129999999999995,
+          "timestamp": "2025-07-23T01:53:56.934338"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 60.319999999999986,
-          "timestamp": "2025-07-23T01:34:11.391782"
+          "tempo_execucao": 52.11,
+          "timestamp": "2025-07-23T01:53:59.285617"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 53.32,
-          "timestamp": "2025-07-23T01:35:16.191572"
+          "tempo_execucao": 51.12,
+          "timestamp": "2025-07-23T10:29:59.515095"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 46.32,
-          "timestamp": "2025-07-23T01:35:18.488604"
+          "tempo_execucao": 60.12,
+          "timestamp": "2025-07-23T10:30:01.771814"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.229936",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.488604"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.771814"
     },
     "GPS_Localização_NAVEGACAO_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 82.71123292913647,
+      "tempo_medio_execucao": 66.20694672483297,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 95.79999999999998,
-          "timestamp": "2025-07-23T01:08:06.360845"
+          "tempo_execucao": 64.13999999999999,
+          "timestamp": "2025-07-23T01:45:27.411678"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 74.74999999999999,
-          "timestamp": "2025-07-23T01:08:08.518473"
+          "tempo_execucao": 71.16,
+          "timestamp": "2025-07-23T01:45:29.583208"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 98.84999999999998,
-          "timestamp": "2025-07-23T01:08:41.381512"
+          "tempo_execucao": 70.14999999999999,
+          "timestamp": "2025-07-23T01:45:49.090542"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 101.94999999999997,
-          "timestamp": "2025-07-23T01:08:43.588393"
+          "tempo_execucao": 63.12,
+          "timestamp": "2025-07-23T01:45:51.363828"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 76.39999999999999,
-          "timestamp": "2025-07-23T01:33:09.868913"
+          "tempo_execucao": 57.129999999999995,
+          "timestamp": "2025-07-23T01:46:17.849740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 84.41,
-          "timestamp": "2025-07-23T01:33:12.029581"
+          "tempo_execucao": 61.129999999999995,
+          "timestamp": "2025-07-23T01:46:20.038180"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 76.39999999999999,
-          "timestamp": "2025-07-23T01:34:09.248941"
+          "tempo_execucao": 70.14999999999999,
+          "timestamp": "2025-07-23T01:53:56.935338"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 86.41,
-          "timestamp": "2025-07-23T01:34:11.392781"
+          "tempo_execucao": 61.129999999999995,
+          "timestamp": "2025-07-23T01:53:59.286619"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 98.49000000000001,
-          "timestamp": "2025-07-23T01:35:16.193570"
+          "tempo_execucao": 64.13999999999999,
+          "timestamp": "2025-07-23T10:29:59.516094"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 68.39999999999999,
-          "timestamp": "2025-07-23T01:35:18.489605"
+          "tempo_execucao": 71.14,
+          "timestamp": "2025-07-23T10:30:01.772814"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.231935",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.489605"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.772814"
     },
     "Planejamento_Rota_NAVEGACAO_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 98.29866789036998,
+      "tempo_medio_execucao": 85.67855093083647,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 99.84999999999998,
-          "timestamp": "2025-07-23T01:08:06.360845"
+          "tempo_execucao": 78.16,
+          "timestamp": "2025-07-23T01:45:27.411678"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 94.94999999999997,
-          "timestamp": "2025-07-23T01:08:08.518975"
+          "tempo_execucao": 89.19000000000001,
+          "timestamp": "2025-07-23T01:45:29.584207"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 70.64999999999999,
-          "timestamp": "2025-07-23T01:08:41.380510"
+          "tempo_execucao": 86.17,
+          "timestamp": "2025-07-23T01:45:49.091541"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 107.99999999999997,
-          "timestamp": "2025-07-23T01:08:43.588393"
+          "tempo_execucao": 75.14,
+          "timestamp": "2025-07-23T01:45:51.363828"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 89.47,
-          "timestamp": "2025-07-23T01:33:09.869915"
+          "tempo_execucao": 71.14999999999999,
+          "timestamp": "2025-07-23T01:46:17.850740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 102.49000000000001,
-          "timestamp": "2025-07-23T01:33:12.030581"
+          "tempo_execucao": 78.16,
+          "timestamp": "2025-07-23T01:46:20.039181"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 84.41,
-          "timestamp": "2025-07-23T01:34:09.248941"
+          "tempo_execucao": 88.18,
+          "timestamp": "2025-07-23T01:53:56.936339"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 105.49000000000001,
-          "timestamp": "2025-07-23T01:34:11.393781"
+          "tempo_execucao": 77.14999999999999,
+          "timestamp": "2025-07-23T01:53:59.288617"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 108.56000000000002,
-          "timestamp": "2025-07-23T01:35:16.194571"
+          "tempo_execucao": 95.18,
+          "timestamp": "2025-07-23T10:29:59.517094"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 94.49000000000001,
-          "timestamp": "2025-07-23T01:35:18.490604"
+          "tempo_execucao": 88.17000000000002,
+          "timestamp": "2025-07-23T10:30:01.775814"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.231935",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.490604"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.775814"
     },
     "Mapeamento_HD_NAVEGACAO_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 100.74026606686049,
+      "tempo_medio_execucao": 97.22974013760015,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 73.64999999999999,
-          "timestamp": "2025-07-23T01:08:06.359791"
+          "tempo_execucao": 100.19000000000001,
+          "timestamp": "2025-07-23T01:45:27.412677"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 90.84999999999998,
-          "timestamp": "2025-07-23T01:08:08.518473"
+          "tempo_execucao": 104.21000000000002,
+          "timestamp": "2025-07-23T01:45:29.585209"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 91.79999999999998,
-          "timestamp": "2025-07-23T01:08:41.381512"
+          "tempo_execucao": 101.19000000000001,
+          "timestamp": "2025-07-23T01:45:49.091541"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 94.84999999999998,
-          "timestamp": "2025-07-23T01:08:43.587393"
+          "tempo_execucao": 96.17000000000002,
+          "timestamp": "2025-07-23T01:45:51.364828"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 90.48,
-          "timestamp": "2025-07-23T01:33:09.869915"
+          "tempo_execucao": 92.18,
+          "timestamp": "2025-07-23T01:46:17.851740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 103.55000000000001,
-          "timestamp": "2025-07-23T01:33:12.031581"
+          "tempo_execucao": 98.19000000000001,
+          "timestamp": "2025-07-23T01:46:20.042185"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 91.47,
-          "timestamp": "2025-07-23T01:34:09.248941"
+          "tempo_execucao": 107.21000000000002,
+          "timestamp": "2025-07-23T01:53:56.936339"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 111.55000000000001,
-          "timestamp": "2025-07-23T01:34:11.393781"
+          "tempo_execucao": 95.18,
+          "timestamp": "2025-07-23T01:53:59.290615"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 116.57000000000002,
-          "timestamp": "2025-07-23T01:35:16.194571"
+          "tempo_execucao": 79.16,
+          "timestamp": "2025-07-23T10:29:59.517094"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 92.48,
-          "timestamp": "2025-07-23T01:35:18.490604"
+          "tempo_execucao": 107.20000000000003,
+          "timestamp": "2025-07-23T10:30:01.777815"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.232937",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.490604"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.777815"
     },
     "Controle_Climatização_CONFORTO_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 113.234635634446,
+      "tempo_medio_execucao": 111.0611973586172,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 107.94999999999997,
-          "timestamp": "2025-07-23T01:08:06.360845"
+          "tempo_execucao": 106.20000000000002,
+          "timestamp": "2025-07-23T01:45:27.412677"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 100.99999999999997,
-          "timestamp": "2025-07-23T01:08:08.518975"
+          "tempo_execucao": 114.22000000000003,
+          "timestamp": "2025-07-23T01:45:29.585209"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 118.99999999999997,
-          "timestamp": "2025-07-23T01:08:41.381512"
+          "tempo_execucao": 111.20000000000002,
+          "timestamp": "2025-07-23T01:45:49.091541"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 129.14999999999998,
-          "timestamp": "2025-07-23T01:08:43.588393"
+          "tempo_execucao": 106.18000000000002,
+          "timestamp": "2025-07-23T01:45:51.364828"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 100.49000000000001,
-          "timestamp": "2025-07-23T01:33:09.869915"
+          "tempo_execucao": 101.19000000000001,
+          "timestamp": "2025-07-23T01:46:17.851740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 113.56000000000002,
-          "timestamp": "2025-07-23T01:33:12.031581"
+          "tempo_execucao": 107.20000000000002,
+          "timestamp": "2025-07-23T01:46:20.043182"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 98.48,
-          "timestamp": "2025-07-23T01:34:09.249945"
+          "tempo_execucao": 132.25000000000006,
+          "timestamp": "2025-07-23T01:53:56.938337"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 119.56000000000002,
-          "timestamp": "2025-07-23T01:34:11.394780"
+          "tempo_execucao": 103.19000000000001,
+          "timestamp": "2025-07-23T01:53:59.291613"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 122.63000000000002,
-          "timestamp": "2025-07-23T01:35:16.194571"
+          "tempo_execucao": 108.20000000000002,
+          "timestamp": "2025-07-23T10:29:59.518094"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 109.56000000000002,
-          "timestamp": "2025-07-23T01:35:18.491604"
+          "tempo_execucao": 113.21000000000004,
+          "timestamp": "2025-07-23T10:30:01.778816"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.232937",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.491604"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.778816"
     },
     "Sistema_Audio_CONFORTO_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 124.4353816966225,
+      "tempo_medio_execucao": 115.72725528123291,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 123.04999999999997,
-          "timestamp": "2025-07-23T01:08:06.361844"
+          "tempo_execucao": 112.21000000000002,
+          "timestamp": "2025-07-23T01:45:27.412677"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 109.04999999999997,
-          "timestamp": "2025-07-23T01:08:08.518975"
+          "tempo_execucao": 120.23000000000003,
+          "timestamp": "2025-07-23T01:45:29.586208"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 127.04999999999997,
-          "timestamp": "2025-07-23T01:08:41.382511"
+          "tempo_execucao": 118.21000000000002,
+          "timestamp": "2025-07-23T01:45:49.091541"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 136.2,
-          "timestamp": "2025-07-23T01:08:43.589392"
+          "tempo_execucao": 111.19000000000003,
+          "timestamp": "2025-07-23T01:45:51.364828"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 118.56000000000002,
-          "timestamp": "2025-07-23T01:33:09.870913"
+          "tempo_execucao": 106.20000000000002,
+          "timestamp": "2025-07-23T01:46:17.852740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 120.57000000000002,
-          "timestamp": "2025-07-23T01:33:12.031581"
+          "tempo_execucao": 111.21000000000002,
+          "timestamp": "2025-07-23T01:46:20.043182"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 114.56000000000002,
-          "timestamp": "2025-07-23T01:34:09.249945"
+          "tempo_execucao": 125.24000000000004,
+          "timestamp": "2025-07-23T01:53:56.937337"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 138.64000000000001,
-          "timestamp": "2025-07-23T01:34:11.394780"
+          "tempo_execucao": 111.20000000000002,
+          "timestamp": "2025-07-23T01:53:59.291613"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 134.65000000000003,
-          "timestamp": "2025-07-23T01:35:16.195571"
+          "tempo_execucao": 99.19000000000001,
+          "timestamp": "2025-07-23T10:29:59.517094"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 115.57000000000002,
-          "timestamp": "2025-07-23T01:35:18.491604"
+          "tempo_execucao": 129.23000000000005,
+          "timestamp": "2025-07-23T10:30:01.780814"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.233936",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.491604"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.780814"
     },
     "Interface_Usuario_CONFORTO_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 124.15520843030549,
+      "tempo_medio_execucao": 122.84020373038057,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 118.99999999999997,
-          "timestamp": "2025-07-23T01:08:06.360845"
+          "tempo_execucao": 125.23000000000003,
+          "timestamp": "2025-07-23T01:45:27.413677"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 120.14999999999996,
-          "timestamp": "2025-07-23T01:08:08.518975"
+          "tempo_execucao": 133.25000000000003,
+          "timestamp": "2025-07-23T01:45:29.586208"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 112.94999999999997,
-          "timestamp": "2025-07-23T01:08:41.381512"
+          "tempo_execucao": 126.22000000000003,
+          "timestamp": "2025-07-23T01:45:49.092541"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 123.04999999999997,
-          "timestamp": "2025-07-23T01:08:43.588393"
+          "tempo_execucao": 124.21000000000004,
+          "timestamp": "2025-07-23T01:45:51.365828"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 121.57000000000002,
-          "timestamp": "2025-07-23T01:33:09.870913"
+          "tempo_execucao": 120.22000000000003,
+          "timestamp": "2025-07-23T01:46:17.852740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 129.63000000000002,
-          "timestamp": "2025-07-23T01:33:12.031581"
+          "tempo_execucao": 125.23000000000003,
+          "timestamp": "2025-07-23T01:46:20.044180"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 109.55000000000001,
-          "timestamp": "2025-07-23T01:34:09.249945"
+          "tempo_execucao": 121.23000000000003,
+          "timestamp": "2025-07-23T01:53:56.937337"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 134.63000000000002,
-          "timestamp": "2025-07-23T01:34:11.394780"
+          "tempo_execucao": 121.21000000000002,
+          "timestamp": "2025-07-23T01:53:59.291613"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 130.64000000000004,
-          "timestamp": "2025-07-23T01:35:16.194571"
+          "tempo_execucao": 122.22000000000003,
+          "timestamp": "2025-07-23T10:29:59.518094"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 119.63000000000002,
-          "timestamp": "2025-07-23T01:35:18.491604"
+          "tempo_execucao": 123.22000000000004,
+          "timestamp": "2025-07-23T10:30:01.779817"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.234937",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.491604"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.779817"
     },
     "Monitoramento_Sistema_DIAGNOSTICO_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 0,
-      "tempo_medio_execucao": 147.7656028014635,
+      "tempo_medio_execucao": 146.66857571300918,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 135.14999999999998,
-          "timestamp": "2025-07-23T01:08:06.361844"
+          "tempo_execucao": 137.25000000000003,
+          "timestamp": "2025-07-23T01:45:27.414678"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 133.19999999999996,
-          "timestamp": "2025-07-23T01:08:08.518975"
+          "tempo_execucao": 144.27,
+          "timestamp": "2025-07-23T01:45:29.587209"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 138.14999999999998,
-          "timestamp": "2025-07-23T01:08:41.382511"
+          "tempo_execucao": 139.24,
+          "timestamp": "2025-07-23T01:45:49.092541"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 161.40000000000003,
-          "timestamp": "2025-07-23T01:08:43.589392"
+          "tempo_execucao": 141.23000000000002,
+          "timestamp": "2025-07-23T01:45:51.365828"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 134.64000000000001,
-          "timestamp": "2025-07-23T01:33:09.870913"
+          "tempo_execucao": 136.24,
+          "timestamp": "2025-07-23T01:46:17.853740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 146.65,
-          "timestamp": "2025-07-23T01:33:12.032582"
+          "tempo_execucao": 138.25000000000003,
+          "timestamp": "2025-07-23T01:46:20.044180"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 130.63000000000002,
-          "timestamp": "2025-07-23T01:34:09.251434"
+          "tempo_execucao": 146.27000000000004,
+          "timestamp": "2025-07-23T01:53:56.938337"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 162.72,
-          "timestamp": "2025-07-23T01:34:11.396781"
+          "tempo_execucao": 144.24,
+          "timestamp": "2025-07-23T01:53:59.292613"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 156.73000000000002,
-          "timestamp": "2025-07-23T01:35:16.195571"
+          "tempo_execucao": 146.25,
+          "timestamp": "2025-07-23T10:29:59.519094"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 143.71000000000004,
-          "timestamp": "2025-07-23T01:35:18.492605"
+          "tempo_execucao": 154.27,
+          "timestamp": "2025-07-23T10:30:01.783942"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.234937",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.492605"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.783942"
     },
     "Log_Eventos_DIAGNOSTICO_chuva_alta_True": {
       "fator_aprendizado": 0.7,
-      "execucoes_totais": 12,
+      "execucoes_totais": 26,
       "execucoes_sucesso": 1,
-      "tempo_medio_execucao": 155.5151317367965,
+      "tempo_medio_execucao": 136.7472860785158,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 143.2,
-          "timestamp": "2025-07-23T01:08:06.361844"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 138.24999999999997,
-          "timestamp": "2025-07-23T01:08:08.519978"
+          "tempo_execucao": 142.26000000000002,
+          "timestamp": "2025-07-23T01:45:27.414678"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 143.2,
-          "timestamp": "2025-07-23T01:08:41.382511"
+          "tempo_execucao": 149.28,
+          "timestamp": "2025-07-23T01:45:29.587209"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 169.45000000000005,
-          "timestamp": "2025-07-23T01:08:43.589392"
+          "tempo_execucao": 158.26999999999998,
+          "timestamp": "2025-07-23T01:45:49.093541"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 142.65,
-          "timestamp": "2025-07-23T01:33:09.871914"
+          "tempo_execucao": 147.24,
+          "timestamp": "2025-07-23T01:45:51.365828"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 152.71,
-          "timestamp": "2025-07-23T01:33:12.032582"
+          "tempo_execucao": 143.25,
+          "timestamp": "2025-07-23T01:46:17.853740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 146.65,
-          "timestamp": "2025-07-23T01:34:09.251434"
+          "tempo_execucao": 144.26000000000002,
+          "timestamp": "2025-07-23T01:46:20.045181"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 170.73,
-          "timestamp": "2025-07-23T01:34:11.396781"
+          "tempo_execucao": 154.28000000000003,
+          "timestamp": "2025-07-23T01:53:56.938337"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 163.79000000000002,
-          "timestamp": "2025-07-23T01:35:16.196571"
+          "tempo_execucao": 126.22000000000003,
+          "timestamp": "2025-07-23T01:53:59.292613"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 149.72000000000003,
-          "timestamp": "2025-07-23T01:35:18.494206"
+          "tempo_execucao": 128.23000000000002,
+          "timestamp": "2025-07-23T10:29:59.518094"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": false,
+          "tempo_execucao": 133.24000000000004,
+          "timestamp": "2025-07-23T10:30:01.781931"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.235937",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.494206"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.781931"
     },
     "Telemetria_DIAGNOSTICO_chuva_alta_True": {
-      "fator_aprendizado": 1.0,
-      "execucoes_totais": 12,
-      "execucoes_sucesso": 6,
-      "tempo_medio_execucao": 149.193017523158,
+      "fator_aprendizado": 0.7692307692307692,
+      "execucoes_totais": 26,
+      "execucoes_sucesso": 7,
+      "tempo_medio_execucao": 152.43552483457108,
       "contextos_execucao": [
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 151.25,
-          "timestamp": "2025-07-23T01:08:06.361844"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 152.35,
-          "timestamp": "2025-07-23T01:08:08.519978"
+          "sucesso": false,
+          "tempo_execucao": 151.27,
+          "timestamp": "2025-07-23T01:45:27.414678"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 157.25,
-          "timestamp": "2025-07-23T01:08:41.383510"
+          "tempo_execucao": 159.29,
+          "timestamp": "2025-07-23T01:45:29.587209"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 159.35000000000002,
-          "timestamp": "2025-07-23T01:08:43.589392"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 152.71,
-          "timestamp": "2025-07-23T01:33:09.871914"
-        },
-        {
-          "clima": "chuva",
-          "trafego": "alta",
-          "velocidade": 95.0,
-          "sucesso": true,
-          "tempo_execucao": 161.72,
-          "timestamp": "2025-07-23T01:33:12.032582"
+          "tempo_execucao": 151.26,
+          "timestamp": "2025-07-23T01:45:49.093541"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 138.64000000000001,
-          "timestamp": "2025-07-23T01:34:09.251434"
+          "tempo_execucao": 156.25,
+          "timestamp": "2025-07-23T01:45:51.366828"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 157.71,
-          "timestamp": "2025-07-23T01:34:11.395781"
+          "tempo_execucao": 154.26999999999998,
+          "timestamp": "2025-07-23T01:46:17.854740"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 152.72000000000003,
-          "timestamp": "2025-07-23T01:35:16.195571"
+          "tempo_execucao": 158.28,
+          "timestamp": "2025-07-23T01:46:20.045181"
         },
         {
           "clima": "chuva",
           "trafego": "alta",
           "velocidade": 95.0,
           "sucesso": false,
-          "tempo_execucao": 139.65000000000003,
-          "timestamp": "2025-07-23T01:35:18.492605"
+          "tempo_execucao": 163.29000000000002,
+          "timestamp": "2025-07-23T01:53:56.939338"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": false,
+          "tempo_execucao": 154.25,
+          "timestamp": "2025-07-23T01:53:59.292613"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": false,
+          "tempo_execucao": 157.26999999999998,
+          "timestamp": "2025-07-23T10:29:59.519094"
+        },
+        {
+          "clima": "chuva",
+          "trafego": "alta",
+          "velocidade": 95.0,
+          "sucesso": false,
+          "tempo_execucao": 142.25000000000003,
+          "timestamp": "2025-07-23T10:30:01.782940"
         }
       ],
       "primeira_execucao": "2025-07-23T01:07:44.236940",
-      "ultimas_atualizacao": "2025-07-23T01:35:18.492605"
+      "ultimas_atualizacao": "2025-07-23T10:30:01.782940"
     }
   },
   "estatisticas_sessao": {
     "tarefas_processadas": 15,
-    "sobrecarga_total": 0.7300000000000003,
-    "trocas_contexto": 37
+    "sobrecarga_total": 0.2800000000000001,
+    "trocas_contexto": 28
   },
   "modelo_pred": {
     "Detecção_Obstáculo_SEGURANCA_CRITICA_chuva_alta_True": [
-      4.625705835157036,
-      -1.9992653670588243
+      4.361043694442604,
+      -1.334118593367182
     ],
     "Sistema_Frenagem_SEGURANCA_CRITICA_chuva_alta_True": [
-      3.854157248092434,
-      -1.4785422545386302
+      3.8970496804209938,
+      -1.763903462826021
     ],
     "Controle_Estabilidade_SEGURANCA_CRITICA_chuva_alta_True": [
-      4.698930450030806,
-      -2.1461881066285016
+      4.438793373416818,
+      -1.7444729626958597
     ],
     "Controle_Motor_TEMPO_REAL_chuva_alta_True": [
-      7.337506729078608,
-      -3.25662917789982
+      6.859674647511548,
+      -2.030591014351063
     ],
     "Sensor_LiDAR_TEMPO_REAL_chuva_alta_True": [
-      5.950500674096716,
-      -1.5603514928711477
+      5.8364733835330505,
+      -2.2630481813557477
     ],
     "Processamento_Camera_TEMPO_REAL_chuva_alta_True": [
-      7.261320590041063,
-      -2.4965937485895213
+      6.7768164833351285,
+      -1.3034026861048273
     ],
     "GPS_Localização_NAVEGACAO_chuva_alta_True": [
-      7.645179684041702,
-      -2.5513188233308792
+      7.375214812604192,
+      -3.6645667897438874
     ],
     "Planejamento_Rota_NAVEGACAO_chuva_alta_True": [
-      9.782360423591873,
-      -3.6374451127704
+      9.066970699761605,
+      -3.3318140621813677
     ],
     "Mapeamento_HD_NAVEGACAO_chuva_alta_True": [
-      11.750281016462232,
-      -3.303987755096663
+      9.153380333889643,
+      -2.896358222513833
     ],
     "Controle_Climatização_CONFORTO_chuva_alta_True": [
-      7.8044756859536,
+      7.95249406252014,
       -0.5599999999999999
     ],
     "Sistema_Audio_CONFORTO_chuva_alta_True": [
-      6.3788054394498,
+      5.828391871820035,
       -0.58
     ],
     "Interface_Usuario_CONFORTO_chuva_alta_True": [
-      8.839417332175078,
-      -2.5805322452683868
+      8.948368185703623,
+      -4.180454468809279
     ],
     "Monitoramento_Sistema_DIAGNOSTICO_chuva_alta_True": [
-      9.333976965845999,
-      -3.832998765391922
+      9.576613061221426,
+      -4.432200489927714
     ],
     "Log_Eventos_DIAGNOSTICO_chuva_alta_True": [
-      6.9599130759807,
+      6.034451641930618,
       -0.47000000000000003
     ],
     "Telemetria_DIAGNOSTICO_chuva_alta_True": [
-      9.158503481482601,
-      -0.45999999999999996
+      8.147602865410596,
+      -3.097056563970684
     ]
   }
 }

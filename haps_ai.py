@@ -526,46 +526,61 @@ class EscalonadorHAPS(EscalonadorCAV):
             return quantum_final
             
         return quantum_base
-    
+
     # DENTRO DA CLASSE EscalonadorHAPS
+
     def calcular_prioridade_dinamica(self, tarefa: TarefaCAV, tempo_atual_simulado: float) -> float:
-        prioridade_base = tarefa.prioridade
-        # Verifica se tipo_processo não é None antes de acessar .value
-        peso_tipo = tarefa.tipo_processo.value / 100.0 if tarefa.tipo_processo else 0.5
-        fator_contexto = self.contexto.get_fator_ajuste(tarefa.tipo_processo)
-        tempo_decorrido = tempo_atual_simulado - tarefa.timestamp_chegada
+        """
+        Calcula a prioridade usando um modelo de UTILIDADE PONDERADA.
+        Esta abordagem é mais estável e estratégica que a multiplicação de fatores.
+        """
         
-        tempo_restante_deadline = float('inf')
+        # --- Pesos (Weights): Define a "personalidade" do escalonador ---
+        # Estes são os únicos valores que você talvez queira ajustar no futuro.
+        # A soma deles não precisa ser 1. O que importa é a proporção entre eles.
+        w_urgencia = 5.0    # MUITO IMPORTANTE: Foco total em não perder deadlines.
+        w_importancia = 2.0 # IMPORTANTE: Tarefas de segurança têm grande vantagem.
+        w_eficiencia = 1.5  # Bônus para tarefas que estão quase terminando (melhora o throughput).
+        w_espera = 1.0      # Garante que ninguém seja esquecido (anti-starvation).
+
+        # --- Cálculo das Pontuações (Scores) para cada fator ---
+
+        # 1. Pontuação de IMPORTÂNCIA (Static Score)
+        # Baseado no tipo de processo. Varia de 20 (Diagnóstico) a 100 (Segurança).
+        score_importancia = tarefa.tipo_processo.value if tarefa.tipo_processo else 20
+
+        # 2. Pontuação de URGÊNCIA (Deadline Score)
+        score_urgencia = 0.0
         if tarefa.deadline is not None:
-            tempo_restante_deadline = max(1, tarefa.deadline - tempo_decorrido)
-        
-        fator_urgencia = 1.0 / max(1, tempo_restante_deadline / 10.0)
+            tempo_restante_deadline = tarefa.deadline - tempo_atual_simulado
+            if tempo_restante_deadline <= 0:
+                # EMERGÊNCIA MÁXIMA: O deadline já passou ou está passando agora.
+                score_urgencia = 5000 
+            else:
+                # A pontuação aumenta exponencialmente quanto mais perto o deadline estiver.
+                score_urgencia = 1000 / tempo_restante_deadline
 
-        hash_tarefa = self._gerar_hash_tarefa(tarefa)
-        fator_aprendizado = self.historico_desempenho.get(hash_tarefa, {}).get('fator_aprendizado', 1.0)
+        # 3. Pontuação de EFICIÊNCIA (Shortest Remaining Time Score)
+        # Dá um bônus para tarefas que estão perto de serem concluídas.
+        score_eficiencia = 100 / max(1.0, tarefa.tempo_restante)
 
+        # 4. Pontuação de ESPERA (Aging Score)
+        # A pontuação aumenta linearmente com o tempo que a tarefa está esperando.
         tempo_espera = tempo_atual_simulado - tarefa.timestamp_chegada
-        # MUDANÇA: Fator de aging "domado" para não crescer infinitamente.
-        # Ele agora dá um bônus máximo de 1.5 (ou 150%) para evitar prioridades extremas.
-        bonus_aging = min(tempo_espera * 0.05, 1.5) # <-- LÓGICA MAIS SEGURA
-        fator_aging = 1.0 + bonus_aging
-
-        tempo_restante_previsto = self.prever_tempo_exec(tarefa)
-        risco_deadline = 1.0
-        if tempo_restante_deadline != float('inf'):
-            risco_deadline = max(1, tempo_restante_previsto / tempo_restante_deadline)
-        fator_preditivo = 1.0 + math.log(risco_deadline + 1)
-
-        if tarefa.preempcoes_consecutivas > 3:
-            fator_anti_starvation = 1.0 + (tarefa.preempcoes_consecutivas - 3) * 0.3
-        else:
-            fator_anti_starvation = 1.0
-
-        prioridade_dinamica = (
-            prioridade_base * peso_tipo * fator_contexto * fator_urgencia * fator_aprendizado * fator_aging * fator_preditivo * fator_anti_starvation
-        )
+        score_espera = tempo_espera
         
-        return prioridade_dinamica
+        # --- Cálculo Final da Prioridade ---
+        # Soma ponderada de todas as pontuações.
+        prioridade_final = (
+            (w_importancia * score_importancia) +
+            (w_urgencia * score_urgencia) +
+            (w_eficiencia * score_eficiencia) +
+            (w_espera * score_espera)
+        )
+
+        # print(f"Tarefa: {tarefa.nome} | Prio Final: {prioridade_final:.2f} | Urg: {score_urgencia:.2f} | Imp: {score_importancia:.2f} | Efi: {score_eficiencia:.2f} | Esp: {score_espera:.2f}")
+
+        return prioridade_final
     
     def adicionar_tarefa_fila(self, tarefa: TarefaCAV, tempo_atual_simulado: float):
         """Adiciona tarefa à fila apropriada com prioridade dinâmica calculada no tempo simulado."""
@@ -639,9 +654,13 @@ class EscalonadorHAPS(EscalonadorCAV):
         while not self.todas_filas_vazias():
             print(f"\n--- CICLO {ciclo} (Tempo Simulado: {tempo_atual_simulado:.2f}s) ---")
             
-            if ciclo > 1 and ciclo % self.intervalo_reavaliacao == 0:
-                tempo_reavaliacao = self.reavaliar_prioridades_filas(tempo_atual_simulado)
-                tempo_atual_simulado += tempo_reavaliacao
+            # ================================================================= #
+            # ======== REMOÇÃO DA REAVALIAÇÃO PERIÓDICA DE PRIORIDADES ========#
+            # Esta era a principal causa da baixa performance na simulação.    #
+            # ================================================================= #
+            # if ciclo > 1 and ciclo % self.intervalo_reavaliacao == 0:
+            #     tempo_reavaliacao = self.reavaliar_prioridades_filas(tempo_atual_simulado)
+            #     tempo_atual_simulado += tempo_reavaliacao
             
             tarefa_atual = self.selecionar_proxima_tarefa()
             if tarefa_atual is None:
@@ -655,8 +674,7 @@ class EscalonadorHAPS(EscalonadorCAV):
             
             self.atualizar_modelo(tarefa_atual, tempo_executado)
             
-            # MUDANÇA: Custo de sobrecarga drasticamente reduzido para ser mais realista
-            tempo_sobrecarga = 0.01  # <-- NOVO VALOR
+            tempo_sobrecarga = 0.01  # Custo de troca de contexto mantido baixo
             self.registrar_sobrecarga(tempo_sobrecarga)
             tempo_atual_simulado += tempo_sobrecarga
             
@@ -666,7 +684,7 @@ class EscalonadorHAPS(EscalonadorCAV):
                                     tempo_turnaround > tarefa_atual.deadline)
                 
                 tarefa_atual.preempcoes_consecutivas = 0
-                print(f"[COMP] {tarefa_atual.nome} COMPLETADA! Tempo de Turnaround (simulado): {tempo_turnaround:.2f}s")
+                print(f"[COMP] {tarefa_atual.nome} COMPLETADA! Turnaround: {tempo_turnaround:.2f}s")
                 
                 self._atualizar_aprendizado_ia(tarefa_atual, not deadline_perdido, tempo_turnaround)
             else:
