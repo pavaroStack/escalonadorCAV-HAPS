@@ -5,14 +5,15 @@ import random
 import time
 import copy
 import os
-import heapq
+import json
+import matplotlib.pyplot as plt
 from collections import deque
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List,  Optional, Tuple
 from dataclasses import dataclass
 from datetime import datetime
-
+nome_arquivo = "dados"
 # ==============================================================================
 # CLASSES DE CONTEXTO E ENUMERAÇÕES
 # ==============================================================================
@@ -238,7 +239,7 @@ class EscalonadorHAPS(EscalonadorCAV):
             self.model = None
             print("⚠️ Modelo de ML não encontrado. Usando prioridade base como fallback.")
 
-    def _preparar_features(self, tarefa: TarefaCAV, tempo_atual: float) -> np.ndarray:
+    def _preparar_features(self, tarefa: TarefaCAV, tempo_atual: float, ciclo: int) -> np.ndarray:
         """Cria o vetor de features para uma tarefa em um dado momento."""
         tempo_decorrido = tempo_atual - tarefa.timestamp_chegada
         tempo_restante_deadline = (tarefa.deadline - tempo_atual) if tarefa.deadline is not None else 1000 # Um valor alto para "sem deadline"
@@ -249,31 +250,31 @@ class EscalonadorHAPS(EscalonadorCAV):
             tempo_restante_deadline,
             tarefa.total_preempcoes,
             tarefa.prioridade,
-            tarefa.tipo_processo.value
+            tarefa.tipo_processo.value,
+            ciclo
         ]])
 
-    def calcular_prioridade_ml(self, tarefa: TarefaCAV, tempo_atual: float) -> float:
+    def calcular_prioridade_ml(self, tarefa: TarefaCAV, tempo_atual: float, ciclo: int) -> float:
         """Usa o modelo para prever o risco de falha e define a prioridade."""
         if self.model is None or tarefa.deadline is None:
             return tarefa.prioridade
 
-        features = self._preparar_features(tarefa, tempo_atual)
+        features = self._preparar_features(tarefa, tempo_atual, ciclo)
         prob_falha = self.model.predict_proba(features)[0][1] # Pega a probabilidade da classe '1' (falha)
         
-        # Prioridade é o risco. Se o risco é alto, a prioridade é alta.
         return prob_falha
 
     def adicionar_tarefa_fila(self, tarefa: TarefaCAV):
         if tarefa.tipo_processo in self.filas_por_tipo:
             self.filas_por_tipo[tarefa.tipo_processo].append(tarefa)
 
-    def selecionar_proxima_tarefa(self, tempo_atual: float) -> Optional[TarefaCAV]:
+    def selecionar_proxima_tarefa(self, tempo_atual: float, ciclo: int) -> Optional[TarefaCAV]:
         candidatos = [fila[0] for fila in self.filas_por_tipo.values() if fila]
         if not candidatos:
             return None
 
         # Calcula a prioridade (risco) para cada candidato
-        prioridades = [self.calcular_prioridade_ml(c, tempo_atual) for c in candidatos]
+        prioridades = [self.calcular_prioridade_ml(c, tempo_atual, ciclo) for c in candidatos]
         
         # Escolhe o candidato com a maior prioridade (maior risco de falha)
         melhor_candidato = candidatos[np.argmax(prioridades)]
@@ -286,6 +287,7 @@ class EscalonadorHAPS(EscalonadorCAV):
     def escalonar(self):
         self.log_snapshots = [] # Limpa o log para a nova simulação
         tempo_atual_simulado = 0.0
+        ciclo = 1
 
         for tarefa in self.tarefas:
             tarefa.timestamp_chegada = tempo_atual_simulado
@@ -295,21 +297,20 @@ class EscalonadorHAPS(EscalonadorCAV):
             # Para cada tarefa na fila, tiramos um "snapshot" do seu estado atual
             for fila in self.filas_por_tipo.values():
                 for tarefa_na_fila in fila:
-                    features_atuais = self._preparar_features(tarefa_na_fila, tempo_atual_simulado)[0]
+                    features_atuais = self._preparar_features(tarefa_na_fila, tempo_atual_simulado, ciclo)[0]
                     snapshot = dict(zip(self.get_feature_names(), features_atuais))
-                    snapshot['task_id'] = id(tarefa_na_fila) # ID único para a tarefa nesta simulação
+                    snapshot['task_id'] = id(tarefa_na_fila) 
                     self.log_snapshots.append(snapshot)
             
-            tarefa_atual = self.selecionar_proxima_tarefa(tempo_atual_simulado)
+            tarefa_atual = self.selecionar_proxima_tarefa(tempo_atual_simulado, ciclo)
             if tarefa_atual is None: 
                 break
 
-            # ---- Parte 1 do Cálculo do Tempo: Execução da Tarefa ----
             quantum = self.quantum_base  # Usando o quantum simplificado
             tempo_executado = tarefa_atual.executar(quantum, tempo_atual_simulado)
             tempo_atual_simulado += tempo_executado
 
-            # ---- Parte 2 do Cálculo do Tempo: Sobrecarga da Decisão ----
+
             tempo_sobrecarga = 0.01  # Custo fixo por ciclo
             self.registrar_sobrecarga(tempo_sobrecarga)
             tempo_atual_simulado += tempo_sobrecarga # Cálculo limpo e direto
@@ -318,6 +319,8 @@ class EscalonadorHAPS(EscalonadorCAV):
             if tarefa_atual.tempo_restante > 0:
                 tarefa_atual.total_preempcoes += 1
                 self.adicionar_tarefa_fila(tarefa_atual)
+            
+            ciclo += 1
 
         # Finaliza a simulação e salva os resultados
         self.tempo_simulacao_final = tempo_atual_simulado
@@ -356,7 +359,7 @@ class EscalonadorHAPS(EscalonadorCAV):
         """Helper para garantir consistência nos nomes das features."""
         return [
             'tempo_restante_execucao', 'tempo_decorrido', 'tempo_restante_deadline',
-            'total_preempcoes', 'prioridade_base', 'tipo_processo'
+            'total_preempcoes', 'prioridade_base', 'tipo_processo', 'ciclo' 
         ]
 
 class EscalonadorFIFO(EscalonadorCAV):
@@ -571,144 +574,140 @@ def criar_tarefas_cav_completas() -> List[TarefaCAV]:
 # ==============================================================================
 # FUNÇÃO DE ANÁLISE DE DESEMPENHO AJUSTADA PARA O NOVO FORMATO DE SAÍDA
 # ==============================================================================
-def analisar_desempenho(escalonadores_com_tempos: List[Tuple[str, EscalonadorCAV, float]]):
-    """
-    Analisa e exibe o desempenho dos escalonadores com foco em métricas de simulação.
-    """
-    print("\n" + "="*140 + "\n")
-    print("ANÁLISE COMPARATIVA DE DESEMPENHO DOS ESCALONADORES".center(140))
-    print("\n" + "="*140)
+def analisar_desempenho(escalonadores: List[Tuple[str, EscalonadorCAV]]):
+    """Analisa e exibe o desempenho dos escalonadores"""
+    print("\n" + "="*60)
+    print("ANÁLISE DE DESEMPENHO DOS ESCALONADORES")
+    print("="*60)
 
+    
     resultados = []
-    for nome, escalonador, tempo_exec_real in escalonadores_com_tempos:
-        tarefas_completadas = [t for t in escalonador.tarefas if t.tempo_final is not None]
-        
-        if not tarefas_completadas:
-            resultados.append({
-                'Algoritmo': nome,
-                'Tempo Simulado (s)': escalonador.tempo_simulacao_final,
-                'Turnaround Médio (s)': 0,
-                'Deadlines Perdidos (%)': 0,
-                'Trocas de Contexto': escalonador.trocas_contexto,
-                'Sobrecarga Total (s)': escalonador.sobrecarga_total,
-                'Tempo Real (s)': tempo_exec_real
-            })
-            continue
+    for item in escalonadores:
 
-        turnarounds = [t.tempo_final - t.timestamp_chegada for t in tarefas_completadas]
-        turnaround_medio = sum(turnarounds) / len(turnarounds)
+        nome = item[0]
+        escalonador = item[1]
+        tempo_exec = item[2]
+        turnarounds = []
+        deadlines_perdidos = 0
 
-        tarefas_com_deadline = [t for t in tarefas_completadas if t.deadline is not None]
-        deadlines_perdidos = sum(1 for t in tarefas_com_deadline if (t.tempo_final - t.timestamp_chegada) > t.deadline)
+        for tarefa in escalonador.tarefas:
+
+            if  tarefa.tempo_final is not None:
+                turnaround =  tarefa.tempo_final - tarefa.timestamp_chegada
+                turnarounds.append(turnaround)
+
+                if turnaround > tarefa.deadline:
+                    deadlines_perdidos += 1
         
-        percentual_deadlines_perdidos = (deadlines_perdidos / len(tarefas_com_deadline) * 100) if tarefas_com_deadline else 0
+        deadlines_perdidos = (deadlines_perdidos/len(turnarounds))*100
+
+        turnaround_medio = sum(turnarounds) / len(turnarounds) if turnarounds else 0
+        
+        trocas_contexto = escalonador.trocas_contexto
+        sobrecarga_total = escalonador.sobrecarga_total
 
         resultados.append({
-            'Algoritmo': nome,
-            'Tempo Simulado (s)': escalonador.tempo_simulacao_final,
-            'Turnaround Médio (s)': turnaround_medio,
-            'Deadlines Perdidos (%)': percentual_deadlines_perdidos,
-            'Trocas de Contexto': escalonador.trocas_contexto,
-            'Sobrecarga Total (s)': escalonador.sobrecarga_total,
-            'Tempo Real (s)': tempo_exec_real
+            'nome': nome,
+            'turnaround_medio': turnaround_medio,
+            'tempo_executado': tempo_exec,
+            'deadlines_perdidos': deadlines_perdidos,
+            'trocas_contexto': trocas_contexto,
+            'sobrecarga_total': sobrecarga_total
         })
 
-    # Imprimir tabela de resultados
-    headers = resultados[0].keys()
-    col_widths = {key: max(len(str(key)), max((len(f"{x[key]:.2f}") if isinstance(x[key], float) else len(str(x[key]))) for x in resultados)) for key in headers}
-    header_line = " | ".join(f"{h:<{col_widths[h]}}" for h in headers)
-    print(header_line)
-    print("-" * len(header_line))
+    # Exibir resultados
+    print(f"{'Algoritmo':<20} {'Tempo Total (s)':<18} {'Turnaround Médio (s)':<22} {'Deadlines Perdidos':<20} {'Trocas Contexto':<17} {'Sobrecarga Total (s)':<20}")
+    print("-" * 65)
     for res in resultados:
-        row_line = " | ".join(f"{ (f'{v:.2f}' if isinstance(v, float) else v) :<{col_widths[k]}}" for k, v in res.items())
-        print(row_line)
+        print(f"{res['nome']:<25} {res['tempo_executado']:<20.2f} {res['turnaround_medio']:<20.2f} {res['deadlines_perdidos']:<20.0f} {res['trocas_contexto']:<20} {res['sobrecarga_total']:<20.2f}")
+    return resultados
 
-    # Análise e destaques
-    print("\n" + "-"*50)
-    print("DESTAQUES DA COMPARAÇÃO".center(50))
-    print("-" * 50)
+def executar_comparacao_algoritmos():
     
-    melhor_tempo_simulado = min(resultados, key=lambda x: x['Tempo Simulado (s)'])
-    melhor_turnaround = min(resultados, key=lambda x: x['Turnaround Médio (s)'])
-    melhor_deadlines = min(resultados, key=lambda x: x['Deadlines Perdidos (%)'])
-    menor_sobrecarga = min(resultados, key=lambda x: x['Sobrecarga Total (s)'])
-
-    print(f"🏆 Menor Tempo de Simulação: {melhor_tempo_simulado['Algoritmo']} ({melhor_tempo_simulado['Tempo Simulado (s)']:.2f}s)")
-    print(f"⏱️ Menor Turnaround Médio:   {melhor_turnaround['Algoritmo']} ({melhor_turnaround['Turnaround Médio (s)']:.2f}s)")
-    print(f"🎯 Menor % de Deadlines Perdidos: {melhor_deadlines['Algoritmo']} ({melhor_deadlines['Deadlines Perdidos (%)']:.2f}%)")
-    print(f"⚙️ Menor Sobrecarga Total:   {menor_sobrecarga['Algoritmo']} ({menor_sobrecarga['Sobrecarga Total (s)']:.2f}s)")
-    
-    print("\nNota: 'Tempo Real (s)' é o tempo de execução do script Python, enquanto 'Tempo Simulado (s)' é a métrica de eficiência do escalonador.")
-
-
-# ==============================================================================
-# FUNÇÃO PRINCIPAL DE COMPARAÇÃO
-# ==============================================================================
-
-def executar_comparacao_algoritmos(contexto_teste: ContextoConducao):
-    """
-    Executa comparação entre diferentes algoritmos de escalonamento.
-    Permite usar tarefas completas ou simples.
-    """
+    """Executa comparação entre diferentes algoritmos de escalonamento"""
     print("=" * 80)
     print("COMPARAÇÃO DE ALGORITMOS DE ESCALONAMENTO CAV")
-    print(f"Contexto de Teste: Clima={contexto_teste.clima.name}, Via={contexto_teste.tipo_via.name}, Tráfego={contexto_teste.trafego.name}")
     print("=" * 80)
     
-    # Usa tarefas completas para testar todos os recursos dos escalonadores
+    # Contexto adverso para teste
+    contexto_teste = ContextoConducao(
+        clima=CondicaoClimatica.CHUVA,
+        tipo_via=TipoVia.RODOVIA,
+        trafego=DensidadeTrafego.ALTA,
+        velocidade_atual=95.0,
+        modo_autonomo=True
+    )
+    
+    # Cria tarefas base
     tarefas_base = criar_tarefas_cav_completas()
-
+    
+    # Lista de escalonadores para comparar
     escalonadores = [
         ("HAPS-AI", EscalonadorHAPS(contexto_teste)),
         ("FIFO", EscalonadorFIFO()),
-        ("SJF", EscalonadorSJF()),
         ("Round Robin", EscalonadorRoundRobin()),
-        ("Prioridade Estática", EscalonadorPrioridade()),
-        
+        ("Prioridade Estática", EscalonadorPrioridade())
     ]
     
-    escalonadores_com_tempos = []
+    resultados = {}
+    tempos_execucao = {}
 
-    for nome, escalonador_instancia in escalonadores:
-        print(f"\n{'='*20} TESTANDO {nome.upper()} {'='*20}")
+    for nome, escalonador in escalonadores:
+        print(f"\n{'='*20} TESTANDO {nome} {'='*20}")
+        
+        # Copia tarefas para cada escalonador (reset de estado)
         
         tarefas_copia = copy.deepcopy(tarefas_base)
         
-        # Reseta o estado das tarefas e as adiciona ao escalonador
-        escalonador_instancia.tarefas.clear()
         for tarefa in tarefas_copia:
-            escalonador_instancia.adicionar_tarefa(tarefa)
+            escalonador.adicionar_tarefa(tarefa)
 
-        tempo_inicio_real_algoritmo = time.time()
-        escalonador_instancia.escalonar()
-        tempo_fim_real_algoritmo = time.time()
-        tempo_exec_real_algoritmo = tempo_fim_real_algoritmo - tempo_inicio_real_algoritmo
-        
-        escalonadores_com_tempos.append((nome, escalonador_instancia, tempo_exec_real_algoritmo))
+        inicio = time.time()
+        escalonador.escalonar()
+        fim = time.time()
+        tempo_exec = fim - inicio
+        tempos_execucao[nome] = tempo_exec
     
-    analisar_desempenho(escalonadores_com_tempos)
+    escalonadores_com_tempos = []
+    for nome, escalonador in escalonadores:
+        escalonadores_com_tempos.append((
+            nome,
+            escalonador,
+            tempos_execucao[nome]
+        ))
+    
+    # Analisar desempenho
+    return analisar_desempenho(escalonadores_com_tempos)
+
+# ===== EXEMPLO DE USO PRINCIPAL =====
+def rodar_varias_simulacoes(n=10):
+    for i in range(n):
+        resultado = executar_comparacao_algoritmos()
+        with open(f"{nome_arquivo}{i}.json", "w", encoding="utf-8") as f:
+            json.dump(resultado, f, indent=4, ensure_ascii=False)
 
 if __name__ == "__main__":
-    # Contexto de condução para o teste
-    contexto_exemplo = ContextoConducao(
+    # Cenário de teste adverso
+    contexto_adverso = ContextoConducao(
         clima=CondicaoClimatica.CHUVA,
         tipo_via=TipoVia.RODOVIA,
-        trafego=DensidadeTrafego.ALTA,
-        velocidade_atual=95.0,
+        trafego=DensidadeTrafego.CONGESTIONAMENTO,
+        velocidade_atual=85.0,
         modo_autonomo=True
     )
     
-    # Executa a comparação entre os algoritmos com o contexto criado
-    executar_comparacao_algoritmos(contexto_exemplo)
+    print("HAPS-AI CAV SCHEDULER - DEMONSTRAÇÃO")
+    print("Sistema de Escalonamento Híbrido e Adaptativo para Veículos Autônomos")
+    print("=" * 80)
+    
+    # Cria conjunto de tarefas diversificadas
+    tarefas_teste = criar_tarefas_cav_completas()
+    
+    # Instancia e executa o escalonador HAPS-AI
+    #escalonador_haps = EscalonadorHAPS(contexto_adverso)
+    #for tarefa in tarefas_teste:
+    #    escalonador_haps.adicionar_tarefa_fila(tarefa)
+    
+    #escalonador_haps.escalonar()
 
-if __name__ == "__main__":
-    contexto_exemplo = ContextoConducao(
-        clima=CondicaoClimatica.CHUVA,
-        tipo_via=TipoVia.RODOVIA,
-        trafego=DensidadeTrafego.ALTA,
-        velocidade_atual=95.0,
-        modo_autonomo=True
-    )
-    for i in range(0,5):
-    # Executa a comparação entre os algoritmos
-        executar_comparacao_algoritmos(contexto_exemplo)
+    resultado = rodar_varias_simulacoes(10)
