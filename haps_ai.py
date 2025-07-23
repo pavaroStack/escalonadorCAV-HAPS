@@ -146,32 +146,6 @@ class TarefaCAV:
         return f"TarefaCAV(nome={self.nome}, tipo={type_str}, dur={self.duracao}, prio={self.prioridade}, deadline={deadline_str})"
 
 # ==============================================================================
-# WRAPPER PARA PRIORIDADE DINÂMICA (MANTIDO DO HAPS_AI.PY)
-# ==============================================================================
-class ProcessoComPrioridade:
-    """Wrapper para tarefa com prioridade dinâmica para uso com heapq"""
-
-    def __init__(self, tarefa: TarefaCAV, prioridade_dinamica: float):
-        self.tarefa = tarefa
-        self.prioridade_dinamica = prioridade_dinamica
-
-    def __lt__(self, other):
-        """
-        Comparação para heapq: prioridade maior primeiro, em caso de empate, deadline menor primeiro (EDF)
-        heapq é min-heap, então invertemos a prioridade para simular max-heap.
-        Se deadlines forem None, usa apenas a prioridade dinâmica.
-        """
-        if abs(self.prioridade_dinamica - other.prioridade_dinamica) < 0.001:
-            # Em caso de empate de prioridade, usa EDF (deadline menor primeiro) se houver deadlines
-            if self.tarefa.deadline is not None and other.tarefa.deadline is not None:
-                return self.tarefa.deadline < other.tarefa.deadline
-            return False # Sem critério de desempate claro, considera igual ou não menor
-        return self.prioridade_dinamica > other.prioridade_dinamica
-
-    def __repr__(self):
-        return f"ProcessoComPrioridade({self.tarefa.nome}, prio={self.prioridade_dinamica:.2f})"
-
-# ==============================================================================
 # CLASSE BASE ESCALONADOR E CÁLCULO DE MÉTRICAS AJUSTADO
 # ==============================================================================
 class EscalonadorCAV(ABC):
@@ -244,140 +218,146 @@ class EscalonadorCAV(ABC):
 
 class EscalonadorHAPS(EscalonadorCAV):
     """
-    Escalonador Híbrido e Adaptativo com Machine Learning (Scikit-learn).
+    Versão Final com Scikit-learn e Coleta de Snapshots para resolver o Paradoxo do Vidente.
     """
     def __init__(self, contexto: ContextoConducao):
         super().__init__()
         self.contexto = contexto
-        # As filas agora usam deque, pois a prioridade é calculada no momento da seleção.
-        self.filas_por_tipo = {
-            TipoProcessoCAV.SEGURANCA_CRITICA: deque(),
-            TipoProcessoCAV.TEMPO_REAL: deque(),
-            TipoProcessoCAV.NAVEGACAO: deque(),
-            TipoProcessoCAV.CONFORTO: deque(),
-            TipoProcessoCAV.DIAGNOSTICO: deque()
-        }
-        self.quantum_base_por_tipo = {
-            TipoProcessoCAV.SEGURANCA_CRITICA: 4,
-            TipoProcessoCAV.TEMPO_REAL: 6,
-            TipoProcessoCAV.NAVEGACAO: 8,
-            TipoProcessoCAV.CONFORTO: 10,
-            TipoProcessoCAV.DIAGNOSTICO: 12
-        }
-        # Carrega o modelo de ML treinado
+
+        #faz uma fila/pilha de cada tipo e joga num dicionário
+        self.filas_por_tipo = { tipo: deque() for tipo in TipoProcessoCAV } 
+        self.quantum_base = 4  # Quantum simplificado
+        
+        # Snapshots guardados
+        self.log_snapshots = []
+        
         try:
             self.model = joblib.load('haps_model.joblib')
-            print("✅ Modelo de Machine Learning (Random Forest) carregado com sucesso.")
+            print("✅ Modelo de ML carregado.")
         except FileNotFoundError:
             self.model = None
-            print("⚠️ Modelo de ML 'haps_model.joblib' não encontrado. Usando lógica de fallback (prioridade base).")
+            print("⚠️ Modelo de ML não encontrado. Usando prioridade base como fallback.")
 
-    def calcular_prioridade_ml(self, tarefa: TarefaCAV, tempo_atual_simulado: float) -> float:
-        """Usa o modelo de ML para calcular uma pontuação de risco para a tarefa."""
+    def _preparar_features(self, tarefa: TarefaCAV, tempo_atual: float) -> np.ndarray:
+        """Cria o vetor de features para uma tarefa em um dado momento."""
+        tempo_decorrido = tempo_atual - tarefa.timestamp_chegada
+        tempo_restante_deadline = (tarefa.deadline - tempo_atual) if tarefa.deadline is not None else 1000 # Um valor alto para "sem deadline"
+        
+        return np.array([[
+            tarefa.tempo_restante,
+            tempo_decorrido,
+            tempo_restante_deadline,
+            tarefa.total_preempcoes,
+            tarefa.prioridade,
+            tarefa.tipo_processo.value
+        ]])
+
+    def calcular_prioridade_ml(self, tarefa: TarefaCAV, tempo_atual: float) -> float:
+        """Usa o modelo para prever o risco de falha e define a prioridade."""
         if self.model is None or tarefa.deadline is None:
-            # Lógica de fallback se o modelo não existir ou a tarefa não tiver deadline
             return tarefa.prioridade
 
-        # Prepara o vetor de features em tempo real, no mesmo formato do treino
-        turnaround_atual = tempo_atual_simulado - tarefa.timestamp_chegada
-        features = np.array([[
-            tarefa.duracao, tarefa.prioridade, tarefa.tipo_processo.value,
-            tarefa.total_preempcoes, turnaround_atual, tarefa.deadline
-        ]])
+        features = self._preparar_features(tarefa, tempo_atual)
+        prob_falha = self.model.predict_proba(features)[0][1] # Pega a probabilidade da classe '1' (falha)
         
-        # Usa o modelo para prever a PROBABILIDADE de falha (classe 1)
-        prob_falha = self.model.predict_proba(features)[0][1]
-        
-        # Bônus de urgência para reagir a deadlines iminentes
-        tempo_restante_deadline = tarefa.deadline - tempo_atual_simulado
-        bonus_urgencia = 0
-        if tempo_restante_deadline < (tarefa.duracao * 0.5): # Reação agressiva se o tempo for curto
-            bonus_urgencia = 1000 / max(0.1, tempo_restante_deadline)
-
-        # A prioridade final é uma combinação do risco previsto e da urgência imediata
-        return (prob_falha * 5000) + bonus_urgencia
+        # Prioridade é o risco. Se o risco é alto, a prioridade é alta.
+        return prob_falha
 
     def adicionar_tarefa_fila(self, tarefa: TarefaCAV):
-        """Apenas adiciona a tarefa à sua fila correspondente."""
-        if tarefa.tipo_processo and tarefa.tipo_processo in self.filas_por_tipo:
+        if tarefa.tipo_processo in self.filas_por_tipo:
             self.filas_por_tipo[tarefa.tipo_processo].append(tarefa)
 
-    def selecionar_proxima_tarefa(self, tempo_atual_simulado: float) -> Optional[TarefaCAV]:
-        """O cérebro do HAPS-AI: avalia os candidatos e escolhe o mais crítico usando ML."""
-        candidatos = []
-        for fila in self.filas_por_tipo.values():
-            if fila:
-                candidatos.append(fila[0]) # Pega o primeiro de cada fila sem remover
-
+    def selecionar_proxima_tarefa(self, tempo_atual: float) -> Optional[TarefaCAV]:
+        candidatos = [fila[0] for fila in self.filas_por_tipo.values() if fila]
         if not candidatos:
             return None
 
-        # Calcula a pontuação de risco para cada candidato
-        scores = {c.nome: self.calcular_prioridade_ml(c, tempo_atual_simulado) for c in candidatos}
+        # Calcula a prioridade (risco) para cada candidato
+        prioridades = [self.calcular_prioridade_ml(c, tempo_atual) for c in candidatos]
         
-        # Encontra o nome da tarefa com a maior pontuação
-        melhor_candidato_nome = max(scores, key=scores.get)
+        # Escolhe o candidato com a maior prioridade (maior risco de falha)
+        melhor_candidato = candidatos[np.argmax(prioridades)]
         
-        # Encontra e remove a tarefa escolhida da sua fila original
-        for fila in self.filas_por_tipo.values():
-            if fila and fila[0].nome == melhor_candidato_nome:
-                melhor_tarefa = fila.popleft()
-                print(f"[HAPS-AI] Decisão: {melhor_tarefa.nome} | Prio Calculada: {scores[melhor_tarefa.nome]:.2f}")
-                return melhor_tarefa
-        return None
+        # Remove o candidato escolhido da sua fila
+        self.filas_por_tipo[melhor_candidato.tipo_processo].popleft()
+        
+        return melhor_candidato
 
     def escalonar(self):
-        print("\n=== INICIANDO ESCALONAMENTO HAPS-AI (com Scikit-learn) ===")
+        self.log_snapshots = [] # Limpa o log para a nova simulação
         tempo_atual_simulado = 0.0
-        
+
         for tarefa in self.tarefas:
             tarefa.timestamp_chegada = tempo_atual_simulado
             self.adicionar_tarefa_fila(tarefa)
         
         while any(self.filas_por_tipo.values()):
+            # Para cada tarefa na fila, tiramos um "snapshot" do seu estado atual
+            for fila in self.filas_por_tipo.values():
+                for tarefa_na_fila in fila:
+                    features_atuais = self._preparar_features(tarefa_na_fila, tempo_atual_simulado)[0]
+                    snapshot = dict(zip(self.get_feature_names(), features_atuais))
+                    snapshot['task_id'] = id(tarefa_na_fila) # ID único para a tarefa nesta simulação
+                    self.log_snapshots.append(snapshot)
+            
             tarefa_atual = self.selecionar_proxima_tarefa(tempo_atual_simulado)
-            if tarefa_atual is None: break
+            if tarefa_atual is None: 
+                break
 
-            quantum = self.quantum_base_por_tipo.get(tarefa_atual.tipo_processo, 8)
+            # ---- Parte 1 do Cálculo do Tempo: Execução da Tarefa ----
+            quantum = self.quantum_base  # Usando o quantum simplificado
             tempo_executado = tarefa_atual.executar(quantum, tempo_atual_simulado)
             tempo_atual_simulado += tempo_executado
 
-            tempo_sobrecarga = 0.01
+            # ---- Parte 2 do Cálculo do Tempo: Sobrecarga da Decisão ----
+            tempo_sobrecarga = 0.01  # Custo fixo por ciclo
             self.registrar_sobrecarga(tempo_sobrecarga)
-            tempo_atual_simulado += tempo_sobrecarga
+            tempo_atual_simulado += tempo_sobrecarga # Cálculo limpo e direto
 
+            # Se a tarefa não terminou, ela é preemptada e volta para a fila
             if tarefa_atual.tempo_restante > 0:
                 tarefa_atual.total_preempcoes += 1
                 self.adicionar_tarefa_fila(tarefa_atual)
-        
+
+        # Finaliza a simulação e salva os resultados
         self.tempo_simulacao_final = tempo_atual_simulado
-        self.salvar_historico_para_treino()
+        self._processar_e_salvar_snapshots() # Salva os dados para futuro treino
         self.calcular_metricas()
-        self.exibir_sobrecarga()
+        self.exibir_sobrecarga() # Exibe a sobrecarga total que foi acumulada
+
+    def _processar_e_salvar_snapshots(self, arquivo_csv='haps_training_data.csv'):
+        """Pega todos os snapshots, adiciona o resultado final e salva em CSV."""
+        if not self.log_snapshots: return
         
-    def salvar_historico_para_treino(self, arquivo_csv='haps_training_data.csv'):
-        novos_dados = []
+        # Mapeia o resultado final de cada tarefa
+        resultado_final = {}
         for tarefa in self.tarefas:
-            if tarefa.tempo_final is not None and tarefa.deadline is not None:
-                turnaround = tarefa.tempo_final - tarefa.timestamp_chegada
-                deadline_perdido = 1 if turnaround > tarefa.deadline else 0
-                dados = {
-                    'duracao_total': tarefa.duracao, 'prioridade_base': tarefa.prioridade,
-                    'tipo_processo': tarefa.tipo_processo.value, 'total_preempcoes': tarefa.total_preempcoes,
-                    'turnaround_final': turnaround, 'deadline_final': tarefa.deadline,
-                    'deadline_perdido': deadline_perdido
-                }
-                novos_dados.append(dados)
+            if tarefa.deadline is not None:
+                turnaround = tarefa.tempo_final - tarefa.timestamp_chegada if tarefa.tempo_final is not None else float('inf')
+                resultado_final[id(tarefa)] = 1 if turnaround > tarefa.deadline else 0
         
-        if not novos_dados: return
-        df = pd.DataFrame(novos_dados)
+        # Adiciona a etiqueta 'deadline_perdido' a cada snapshot
+        for snapshot in self.log_snapshots:
+            task_id = snapshot.pop('task_id')
+            snapshot['deadline_perdido'] = resultado_final.get(task_id, 0)
+            
+        df = pd.DataFrame(self.log_snapshots)
+        
         try:
             if not os.path.exists(arquivo_csv):
                 df.to_csv(arquivo_csv, index=False)
             else:
                 df.to_csv(arquivo_csv, mode='a', header=False, index=False)
+            print(f"📈 Snapshots de treinamento salvos em '{arquivo_csv}'.")
         except IOError as e:
-            print(f"Erro ao salvar dados: {e}")
+            print(f"Erro ao salvar snapshots: {e}")
+            
+    def get_feature_names(self):
+        """Helper para garantir consistência nos nomes das features."""
+        return [
+            'tempo_restante_execucao', 'tempo_decorrido', 'tempo_restante_deadline',
+            'total_preempcoes', 'prioridade_base', 'tipo_processo'
+        ]
 
 class EscalonadorFIFO(EscalonadorCAV):
     def escalonar(self):
@@ -729,6 +709,6 @@ if __name__ == "__main__":
         velocidade_atual=95.0,
         modo_autonomo=True
     )
-    
+    for i in range(0,5):
     # Executa a comparação entre os algoritmos
-    executar_comparacao_algoritmos(contexto_exemplo)
+        executar_comparacao_algoritmos(contexto_exemplo)
