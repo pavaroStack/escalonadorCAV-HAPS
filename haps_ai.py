@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 # ==============================================================================
-# CLASSES DE CONTEXTO E ENUMERAÇÕES (MANTIDAS DO HAPS_AI.PY)
+# CLASSES DE CONTEXTO E ENUMERAÇÕES
 # ==============================================================================
 
 class TipoProcessoCAV(Enum):
@@ -250,6 +250,8 @@ class EscalonadorHAPS(EscalonadorCAV):
         super().__init__()
         self.contexto = contexto
         self. arquivo_historico = arquivo_historico
+
+        # historico aprendizado -> [{ [ hash_tarefa: {DATA}, hash_tarefa: {DATA}, ... ]} ]
         self.historico_desempenho: Dict[ str, Dict[ str, Any ] ] = {}
 
         #Parâmetros para o modelo preditivo
@@ -474,7 +476,55 @@ class EscalonadorHAPS(EscalonadorCAV):
         if not tarefa.historico_exec:
             return
         
-        x_antigo = len(tarefa.historico_exec) - 1
+        #obtém o numero de execuções (quantums) 
+        x_antigo = len(tarefa.historico_exec) - 1 # A execução mais recente ainda não foi utilizado para o modelo
+        if x_antigo < 0:
+            x_antigo = 0
+
+        #parâmetros atuais do modelo
+        intercept, slope = self.modelo_pred.get(hash_tarefa, (tarefa.duracao, 0.0)) 
+
+        # Predição do tempo para a próxima execução (antes desta atualização) seria baseada em x_antigo
+        # aqui é aplicada a regressão linear
+        tempo_previsto = intercept + slope * x_antigo
+
+        erro = tempo_real_executado - tempo_previsto
+
+        novo_intercept = intercept + (self.alpha * erro)
+        novo_slope = slope + (self.alpha * erro * x_antigo)
+
+        self.modelo_pred[hash_tarefa] = (novo_intercept, novo_slope)
+
+        print(f"[REGRESSÃO LINEAR] Modelo atualizado para {hash_tarefa}: intercept={novo_intercept:.2f}, slope={novo_slope:.2f} (erro={erro:.2f})")
+
+    def calcular_quantum (self, tarefa: TarefaCAV) -> int:
+
+        quantum_base = self.quantum_base_por_tipo[tarefa.tipo_processo]
+
+        if (hash_tarefa := self._gerar_hash_tarefa(tarefa)) in self.historico_desempenho:
+            dados_tarefa = self.historico_desempenho[hash_tarefa]
+            tempo_medio = dados_tarefa.get("tempo_medio_execucao", quantum_base) 
+
+            razao = tempo_medio/quantum_base
+
+            if razao > 1:
+                fator = max(0.3 , 1 + ((razao - 1)**0.8))
+            else:
+                fator = min(2.0 , razao**0.7)
+            
+            quantum_ajustado = quantum_base * fator
+
+            quantum_min = max(1, quantum_base)
+            quantum_max = min(quantum_base * 3, 15)
+
+            quantum_final = int(round(
+                max(quantum_min, min(quantum_ajustado, quantum_max))
+            ))
+
+            return quantum_final
+            
+        return quantum_base
+
 
 
 
