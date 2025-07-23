@@ -1095,7 +1095,7 @@ def executar_comparacao_algoritmos():
 def rodar_varias_simulacoes(n=10):
     for i in range(n):
         resultado = executar_comparacao_algoritmos()
-        with open(f"{nome_arquivo}{i}.json", "w", encoding="utf-8") as f:
+        with open(f"./graficos/{nome_arquivo}{i}.json", "w", encoding="utf-8") as f:
             json.dump(resultado, f, indent=4, ensure_ascii=False)
 
 if __name__ == "__main__":
