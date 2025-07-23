@@ -3,14 +3,11 @@ import json
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
-# Caminho onde estão os arquivos JSON
-PASTA = "../"  # Altere se necessário
+PASTA = "../"  
 
-# Pasta de saída dos gráficos
 PASTA_SAIDA = "graficos"
 os.makedirs(PASTA_SAIDA, exist_ok=True)
 
-# Dicionário para agrupar os dados por escalonador
 dados = defaultdict(list)
 
 # Lê todos os arquivos JSON na pasta
