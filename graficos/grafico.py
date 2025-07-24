@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 
 # MODIFICADO: Agora busca na mesma pasta do script
-PASTA = "./"
+PASTA = "."
 PASTA_SAIDA = "graficos"
 os.makedirs(PASTA_SAIDA, exist_ok=True)
 

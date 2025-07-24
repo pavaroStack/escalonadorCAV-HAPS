@@ -55,47 +55,6 @@ class ContextoConducao:
     velocidade_atual: float  # km/h
     modo_autonomo: bool
 
-    def get_fator_ajuste(self, tipo: TipoProcessoCAV) -> float:
-        """
-        Calcula fator de ajuste da prioridade baseado no contexto de condução
-        Args:
-            tipo: Tipo do processo CAV
-        Returns:
-            Fator multiplicativo de ajuste (>= 1.0)
-        """
-        fator = 1.0
-        if tipo is None: # Se o tipo de processo não for especificado, retorna fator base
-            return fator
-        
-        # Ajustes por condição climática
-        if self.clima in [CondicaoClimatica.CHUVA, CondicaoClimatica.NEVE]:
-            if tipo == TipoProcessoCAV.SEGURANCA_CRITICA:
-                fator *= 1.3
-        elif self.clima == CondicaoClimatica.NEBLINA:
-            if tipo == TipoProcessoCAV.SEGURANCA_CRITICA:
-                fator *= 1.2
-        
-        # Ajustes por densidade de tráfego
-        if self.trafego in [DensidadeTrafego.ALTA, DensidadeTrafego.CONGESTIONAMENTO]:
-            if tipo == TipoProcessoCAV.SEGURANCA_CRITICA:
-                fator *= 1.2
-            elif tipo == TipoProcessoCAV.NAVEGACAO:
-                fator *= 1.1
-        
-        # Ajustes por velocidade
-        if self.velocidade_atual > 80.0:
-            if tipo == TipoProcessoCAV.SEGURANCA_CRITICA:
-                fator *= 1.4
-            elif tipo == TipoProcessoCAV.TEMPO_REAL:
-                fator *= 1.2
-        
-        # Ajuste por modo autônomo
-        if self.modo_autonomo:
-            if tipo == TipoProcessoCAV.SEGURANCA_CRITICA:
-                fator *= 1.5
-        
-        return fator
-
 # ==============================================================================
 # CLASSE TAREFCAV COM ATRIBUTOS OPCIONAIS E AJUSTE NO MÉTODO EXECUTAR
 # ==============================================================================
@@ -273,19 +232,16 @@ class EscalonadorHAPS(EscalonadorCAV):
         if not candidatos:
             return None
 
-        # Calcula a prioridade (risco) para cada candidato
         prioridades = [self.calcular_prioridade_ml(c, tempo_atual, ciclo) for c in candidatos]
-        
-        # Escolhe o candidato com a maior prioridade (maior risco de falha)
+
         melhor_candidato = candidatos[np.argmax(prioridades)]
-        
-        # Remove o candidato escolhido da sua fila
+
         self.filas_por_tipo[melhor_candidato.tipo_processo].popleft()
         
         return melhor_candidato
 
     def escalonar(self):
-        self.log_snapshots = [] # Limpa o log para a nova simulação
+        self.log_snapshots = [] 
         tempo_atual_simulado = 0.0
         ciclo = 1
 
@@ -306,14 +262,14 @@ class EscalonadorHAPS(EscalonadorCAV):
             if tarefa_atual is None: 
                 break
 
-            quantum = self.quantum_base  # Usando o quantum simplificado
+            quantum = self.quantum_base
             tempo_executado = tarefa_atual.executar(quantum, tempo_atual_simulado)
             tempo_atual_simulado += tempo_executado
 
 
-            tempo_sobrecarga = 0.01  # Custo fixo por ciclo
+            tempo_sobrecarga = 0.01 
             self.registrar_sobrecarga(tempo_sobrecarga)
-            tempo_atual_simulado += tempo_sobrecarga # Cálculo limpo e direto
+            tempo_atual_simulado += tempo_sobrecarga 
 
             # Se a tarefa não terminou, ela é preemptada e volta para a fila
             if tarefa_atual.tempo_restante > 0:
@@ -324,9 +280,9 @@ class EscalonadorHAPS(EscalonadorCAV):
 
         # Finaliza a simulação e salva os resultados
         self.tempo_simulacao_final = tempo_atual_simulado
-        self._processar_e_salvar_snapshots() # Salva os dados para futuro treino
+        self._processar_e_salvar_snapshots() 
         self.calcular_metricas()
-        self.exibir_sobrecarga() # Exibe a sobrecarga total que foi acumulada
+        self.exibir_sobrecarga() 
 
     def _processar_e_salvar_snapshots(self, arquivo_csv='haps_training_data.csv'):
         """Pega todos os snapshots, adiciona o resultado final e salva em CSV."""
@@ -363,38 +319,50 @@ class EscalonadorHAPS(EscalonadorCAV):
         ]
 
 class EscalonadorFIFO(EscalonadorCAV):
+    def __init__(self):
+        super().__init__()
+
     def escalonar(self):
         """Escalonamento FIFO para veículos autônomos"""
         print("\n=== ESCALONAMENTO FIFO ===")
-        tempo_atual_simulado = 0.0 # Inicia o tempo simulado
+        tempo_atual_simulado = 0.0  # Inicia o tempo simulado
+        
+        # --- MUDANÇA PROPOSTA ---
+        # Resetar o estado de todas as tarefas ANTES do início da simulação.
+        # Todas as tarefas chegam no tempo 0 para este benchmark.
         for tarefa in self.tarefas:
-            # Reseta o estado da tarefa para esta simulação (feito também no deepcopy)
             tarefa.tempo_restante = tarefa.duracao
             tarefa.iniciado = False
             tarefa.tempo_inicio = None
             tarefa.tempo_final = None
             tarefa.tempo_espera = 0.0
             tarefa.tempo_resposta = None
-            tarefa.timestamp_chegada = tempo_atual_simulado # A tarefa chega no tempo atual simulado
+            tarefa.timestamp_chegada = 0.0 # Ponto crucial da correção
 
+        # O laço de execução agora apenas processa a fila.
+        for tarefa in self.tarefas:
             print(f"[FIFO] Iniciando {tarefa.nome} no tempo simulado {tempo_atual_simulado:.2f}s")
             
             # Executa a tarefa completamente
             tempo_executado_no_quantum = tarefa.executar(tarefa.duracao, tempo_atual_simulado)
-            time.sleep(0.01) # Simulação acelerada (tempo real para rodar o código)
+            
+            # REMOVIDO: time.sleep(0.01) para uma comparação de desempenho justa
 
-            tempo_atual_simulado += tempo_executado_no_quantum # Avança o tempo simulado
-            tarefa.tempo_final = tempo_atual_simulado # Define o tempo final baseado no tempo simulado
-            tarefa.tempo_espera = tarefa.tempo_final - tarefa.timestamp_chegada - tarefa.duracao # Recalcula espera
+            tempo_atual_simulado += tempo_executado_no_quantum  # Avança o tempo simulado
+            tarefa.tempo_final = tempo_atual_simulado  # Define o tempo final baseado no tempo simulado
+            tarefa.tempo_espera = tarefa.tempo_final - tarefa.timestamp_chegada - tarefa.duracao
 
             print(f"[FIFO] Tarefa {tarefa.nome} finalizada no tempo simulado {tarefa.tempo_final:.2f}s.")
-            self.registrar_sobrecarga(0.05) # Sobrecarga simulada
+            self.registrar_sobrecarga(0.01)  # Sobrecarga simulada
 
-        self.tempo_simulacao_final = tempo_atual_simulado # Registra o tempo total simulado
+        self.tempo_simulacao_final = tempo_atual_simulado  # Registra o tempo total simulado
         self.calcular_metricas()
         self.exibir_sobrecarga()
 
 class EscalonadorSJF(EscalonadorCAV):
+    def __init__(self):
+        super().__init__()
+
     def escalonar(self):
         """Escalonamento SJF para veículos autônomos."""
         print("\n=== ESCALONAMENTO SJF ===")
@@ -415,14 +383,14 @@ class EscalonadorSJF(EscalonadorCAV):
 
             #Executa a tarefa completamente
             tempo_executado = tarefa.executar(tarefa.duracao, tempo_atual_simulado)
-            time.sleep(0.01)  # Simulação acelerada
+            #time.sleep(0.01)  # Simulação acelerada
 
             tempo_atual_simulado += tempo_executado  # Avança o tempo simulado
             tarefa.tempo_final = tempo_atual_simulado  # Define o tempo final
             tarefa.tempo_espera = tarefa.tempo_final - tarefa.timestamp_chegada - tarefa.duracao
 
             print(f"[SJF] Tarefa {tarefa.nome} finalizada no tempo simulado {tarefa.tempo_final:.2f}s.")
-            self.registrar_sobrecarga(0.05)  # Sobrecarga simulada
+            self.registrar_sobrecarga(0.01)  # Sobrecarga simulada
 
         self.tempo_simulacao_final = tempo_atual_simulado  # Registra o tempo total simulado
         self.calcular_metricas()
@@ -431,7 +399,7 @@ class EscalonadorSJF(EscalonadorCAV):
 class EscalonadorRoundRobin(EscalonadorCAV):
     def __init__(self):
         super().__init__()
-        self.quantum = 1
+        self.quantum = 4
 
     def escalonar(self):
         print(f"\n=== ESCALONAMENTO ROUND ROBIN (Q={self.quantum}) ===")
@@ -459,7 +427,7 @@ class EscalonadorRoundRobin(EscalonadorCAV):
                 print(f"[RR] Executando {tarefa.nome} por {self.quantum} unidades (restante: {tarefa.tempo_restante}) no tempo simulado {tempo_atual_simulado:.2f}s")
                 
                 tempo_executado_no_quantum = tarefa.executar(self.quantum, tempo_atual_simulado) # Passa tempo simulado
-                time.sleep(0.01) # Simulação acelerada
+                #time.sleep(0.01) # Simulação acelerada
 
                 tempo_atual_simulado += tempo_executado_no_quantum # Avança o tempo simulado
                 
@@ -483,16 +451,19 @@ class EscalonadorRoundRobin(EscalonadorCAV):
         self.exibir_sobrecarga()
 
 class EscalonadorPrioridade(EscalonadorCAV):
+    def __init__(self):
+        super().__init__()
+
     def escalonar(self):
         """Escalonamento por Prioridade (menor número = maior prioridade)"""
         print("\n=== ESCALONAMENTO POR PRIORIDADE ===")
-        # Ordena as tarefas pela prioridade (menor número = maior prioridade)
-        # Pode usar heapq aqui se preferir um heap real para grandes volumes
+        # Ordena as tarefas pela prioridade
         self.tarefas.sort(key=lambda tarefa: tarefa.prioridade) 
         
-        tempo_atual_simulado = 0.0 # Inicia o tempo simulado
+        tempo_atual_simulado = 0.0  # Inicia o tempo simulado
 
-        # Resetar tarefas para esta simulação específica
+        # --- MUDANÇA PROPOSTA ---
+        # Resetar o estado de todas as tarefas ANTES do início da simulação.
         for t in self.tarefas:
             t.tempo_restante = t.duracao
             t.iniciado = False
@@ -500,28 +471,63 @@ class EscalonadorPrioridade(EscalonadorCAV):
             t.tempo_final = None
             t.tempo_espera = 0.0
             t.tempo_resposta = None
-            t.timestamp_chegada = 0.0 # Todas chegam no tempo 0
+            t.timestamp_chegada = 0.0 # Ponto crucial da correção
 
         for tarefa in self.tarefas:
-            tarefa.timestamp_chegada = tempo_atual_simulado # A tarefa chega no tempo atual simulado
-
             print(f"[PRIO] Iniciando {tarefa.nome} (Prio: {tarefa.prioridade}) no tempo simulado {tempo_atual_simulado:.2f}s.")
             
             # Executa a tarefa completamente
             tempo_executado_no_quantum = tarefa.executar(tarefa.duracao, tempo_atual_simulado)
-            time.sleep(0.01) # Simulação acelerada
+            
+            # REMOVIDO: time.sleep(0.01)
 
-            tempo_atual_simulado += tempo_executado_no_quantum # Avança o tempo simulado
-            tarefa.tempo_final = tempo_atual_simulado # Define o tempo final baseado no tempo simulado
-            tarefa.tempo_espera = tarefa.tempo_final - tarefa.timestamp_chegada - tarefa.duracao # Recalcula espera
+            tempo_atual_simulado += tempo_executado_no_quantum  # Avança o tempo simulado
+            tarefa.tempo_final = tempo_atual_simulado  # Define o tempo final baseado no tempo simulado
+            tarefa.tempo_espera = tarefa.tempo_final - tarefa.timestamp_chegada - tarefa.duracao
 
             print(f"[PRIO] Tarefa {tarefa.nome} finalizada no tempo simulado {tarefa.tempo_final:.2f}s.")
-            self.registrar_sobrecarga(0.08) # Sobrecarga simulada
+            self.registrar_sobrecarga(0.01)  # Sobrecarga simulada
 
         self.tempo_simulacao_final = tempo_atual_simulado
         self.calcular_metricas()
         self.exibir_sobrecarga()
 
+class EscalonadorSJF(EscalonadorCAV):
+    def __init__(self):
+        super().__init__()
+
+    def escalonar(self):
+        """Escalonamento SJF para veículos autônomos."""
+        print("\n=== ESCALONAMENTO SJF ===")
+        tempo_atual_simulado = 0.0  # Inicia o tempo simulado
+        #Ordena a lista de tarefas com base na sua duração.
+        tarefas_ordenadas = sorted(self.tarefas, key=lambda tarefa: tarefa.duracao)
+        for tarefa in tarefas_ordenadas:
+            # Reseta o estado da tarefa para esta simulação
+            tarefa.tempo_restante = tarefa.duracao
+            tarefa.iniciado = False
+            tarefa.tempo_inicio = None
+            tarefa.tempo_final = None
+            tarefa.tempo_espera = 0.0
+            tarefa.tempo_resposta = None
+            tarefa.timestamp_chegada = 0.0
+
+            print(f"[SJF] Iniciando '{tarefa.nome}' no tempo simulado {tempo_atual_simulado:.2f}s")
+
+            #Executa a tarefa completamente
+            tempo_executado = tarefa.executar(tarefa.duracao, tempo_atual_simulado)
+            time.sleep(0.01)  # Simulação acelerada
+
+            tempo_atual_simulado += tempo_executado  # Avança o tempo simulado
+            tarefa.tempo_final = tempo_atual_simulado  # Define o tempo final
+            tarefa.tempo_espera = tarefa.tempo_final - tarefa.timestamp_chegada - tarefa.duracao
+
+            print(f"[SJF] Tarefa {tarefa.nome} finalizada no tempo simulado {tarefa.tempo_final:.2f}s.")
+            self.registrar_sobrecarga(0.01)  # Sobrecarga simulada
+
+        self.tempo_simulacao_final = tempo_atual_simulado  # Registra o tempo total simulado
+        self.calcular_metricas()
+        self.exibir_sobrecarga() 
 
 # ==============================================================================
 # FUNÇÕES DE CRIAÇÃO DE TAREFAS
@@ -589,18 +595,21 @@ def analisar_desempenho(escalonadores: List[Tuple[str, EscalonadorCAV]]):
         tempo_exec = item[2]
         turnarounds = []
         deadlines_perdidos = 0
+        
+        # Filtra apenas as tarefas que de fato possuem um deadline para a métrica
+        tarefas_com_deadline = [t for t in escalonador.tarefas if t.deadline is not None]
+        total_tarefas_com_deadline = len(tarefas_com_deadline)
 
-        for tarefa in escalonador.tarefas:
-
-            if  tarefa.tempo_final is not None:
-                turnaround =  tarefa.tempo_final - tarefa.timestamp_chegada
+        for tarefa in tarefas_com_deadline:
+            if tarefa.tempo_final is not None:
+                turnaround = tarefa.tempo_final - tarefa.timestamp_chegada
                 turnarounds.append(turnaround)
 
                 if turnaround > tarefa.deadline:
                     deadlines_perdidos += 1
         
-        deadlines_perdidos = (deadlines_perdidos/len(turnarounds))*100
-
+        
+        
         turnaround_medio = sum(turnarounds) / len(turnarounds) if turnarounds else 0
         
         trocas_contexto = escalonador.trocas_contexto
@@ -608,18 +617,18 @@ def analisar_desempenho(escalonadores: List[Tuple[str, EscalonadorCAV]]):
 
         resultados.append({
             'nome': nome,
-            'turnaround_medio': turnaround_medio,
             'tempo_executado': tempo_exec,
-            'deadlines_perdidos': deadlines_perdidos,
+            'turnaround_medio': turnaround_medio,
+            'deadlines_perdidos': deadlines_perdidos, # Agora é uma contagem
             'trocas_contexto': trocas_contexto,
             'sobrecarga_total': sobrecarga_total
         })
 
-    # Exibir resultados
-    print(f"{'Algoritmo':<20} {'Tempo Total (s)':<18} {'Turnaround Médio (s)':<22} {'Deadlines Perdidos':<20} {'Trocas Contexto':<17} {'Sobrecarga Total (s)':<20}")
-    print("-" * 65)
+ 
+    print(f"{'Algoritmo':<20} {'Tempo de execução (s)'} {'Turnaround Médio (s)':<20} {'Deadlines Perdidos -'} {total_tarefas_com_deadline:<4} {'Trocas Contexto':<17} {'Sobrecarga Total (s)':<20}")
+    print("-" * 130) 
     for res in resultados:
-        print(f"{res['nome']:<25} {res['tempo_executado']:<20.2f} {res['turnaround_medio']:<20.2f} {res['deadlines_perdidos']:<20.0f} {res['trocas_contexto']:<20} {res['sobrecarga_total']:<20.2f}")
+        print(f"{res['nome']:<25} {res['tempo_executado']:<20.4f} {res['turnaround_medio']:<23.2f} {res['deadlines_perdidos']:<23} {res['trocas_contexto']:<20} {res['sobrecarga_total']:<20.2f}")
     return resultados
 
 def executar_comparacao_algoritmos():
@@ -638,18 +647,16 @@ def executar_comparacao_algoritmos():
         modo_autonomo=True
     )
     
-    # Cria tarefas base
     tarefas_base = criar_tarefas_cav_completas()
-    
-    # Lista de escalonadores para comparar
+
     escalonadores = [
         ("HAPS-AI", EscalonadorHAPS(contexto_teste)),
         ("FIFO", EscalonadorFIFO()),
+        ("SJF", EscalonadorSJF()),
         ("Round Robin", EscalonadorRoundRobin()),
         ("Prioridade Estática", EscalonadorPrioridade())
     ]
     
-    resultados = {}
     tempos_execucao = {}
 
     for nome, escalonador in escalonadores:
@@ -683,7 +690,7 @@ def executar_comparacao_algoritmos():
 def rodar_varias_simulacoes(n=10):
     for i in range(n):
         resultado = executar_comparacao_algoritmos()
-        with open(f"{nome_arquivo}{i}.json", "w", encoding="utf-8") as f:
+        with open(f"./graficos/{nome_arquivo}{i}.json", "w", encoding="utf-8") as f:
             json.dump(resultado, f, indent=4, ensure_ascii=False)
 
 if __name__ == "__main__":
@@ -703,11 +710,5 @@ if __name__ == "__main__":
     # Cria conjunto de tarefas diversificadas
     tarefas_teste = criar_tarefas_cav_completas()
     
-    # Instancia e executa o escalonador HAPS-AI
-    #escalonador_haps = EscalonadorHAPS(contexto_adverso)
-    #for tarefa in tarefas_teste:
-    #    escalonador_haps.adicionar_tarefa_fila(tarefa)
-    
-    #escalonador_haps.escalonar()
 
     resultado = rodar_varias_simulacoes(10)
